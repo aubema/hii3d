@@ -23,7 +23,8 @@ c
        subroutine extrant2d (outfile,valeur,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)
        integer width
-       real valeur(900,900),xcell0,ycell0,gain,offset
+       real valeur(400,400),xcell0,ycell0,gain,offset
+       real valeurprint(400,400)
        integer i,j,nbx,nby,valmax
        character*12 nom
        character*40 outfile
@@ -38,10 +39,10 @@ c
        write(1,*) nbx,nby,valmax
        do i=1,nbx ! Debut de la boucle sur toutes les cases en x.
        do j=1,nby ! Debut de la boucle sur toutes les cases en y.
-       valeur(i,j)=(valeur(i,j)-offset)/gain ! Transformation des donnees avec le gain et l'offset et recherche
+       valeurprint(i,j)=(valeur(i,j)-offset)/gain ! Transformation des donnees avec le gain et l'offset et recherche
        enddo ! Fin de la boucle sur toutes les cases en y.
        enddo
-       write(1,*) ((nint(valeur(i,j)),i=1,nbx),j=1,nby) ! Ecriture de toutes les donnees qui sont ensuite inscrites
+       write(1,*) ((nint(valeurprint(i,j)),i=1,nbx),j=1,nby) ! Ecriture de toutes les donnees qui sont ensuite inscrites
 c ! dans la matricel. Ce sont des boucles imbriquees dans la
 c ! fonction "write" qui couvrent tout le domaine delimite par nbx et nby.
 c ! L'increment de la boucle sur les ranges (latitute) est de -1 car

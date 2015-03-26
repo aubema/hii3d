@@ -13,8 +13,7 @@ c
        subroutine intersii (dens, rapp, aptmp)
        dimension ratio(19,2)
        integer ii, n
-       real dens, rapp, aptmp, ratio
-      
+       real dens, rapp, aptmp, ratio,m,b     
        ratio(1,1)=1.43	
        ratio(2,1)=1.42
        ratio(3,1)=1.41
@@ -53,22 +52,15 @@ c
        ratio(17,2)=20000.
        ratio(18,2)=30000.
        ratio(19,2)=100000.
-       ii=0
-       do 20 n=1, 19
-	 if (ii.ne.1) then
-           if (ratio(n,1).le.rapp) then
-             ii=1
-	   dens=ratio(n,2)+(ratio(n-1,2)-ratio(n,2))*
-     +     (ratio(n,1)-rapp)/(ratio(n,1)-ratio(n-1,1))
-           endif
-	 endif
-  20   continue
-c
-c	correction pour la temperature electronique
-c
-       if (aptmp.le.0.) then
-        aptmp=10000.
-       endif
-       dens=dens*(10000./aptmp)**.5
+       do i=1,19
+         ratio(i,2)=ratio(i,2)*sqrt(10000./aptmp)                                    ! correction de l'echelle horizontale pour la temparature du grap. 5.3 de Osterbrock
+       enddo
+       n=1
+       do while (rapp.lt.ratio(n,1))
+           n=n+1
+           m=(ratio(n-1,1)-ratio(n,1))/(ratio(n-1,2)-ratio(n,2))
+           b=ratio(n-1,1)-m*ratio(n-1,2)
+           dens=(rapp-b)/m
+       enddo
        return
        end      

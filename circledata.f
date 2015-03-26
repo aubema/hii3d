@@ -31,20 +31,22 @@ c    Copyright (C) 2014  Alexandre Carbonneau, Catherine Masson, Maude Roy-Labbe
 c    Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
 
-	subroutine circledata(nbx,nby,temp,densit,tempVSr,neVSr,ndata)
-	integer nx,ny,i,j,nbx,nby,ndata(450)
+	subroutine circledata(nbx,nby,temp,densit,tempVSr,neVSr,ndatT,
+     +  ndatN)
+	integer nx,ny,i,j,nbx,nby,ndatT(450),ndatN(450)
 c        (xc,yc)=coordoné du centre
 c        (xr,yr)=coordoné du rayon 
         real rt,temp(900,900),densit(900,900),yc,xc,x,y,rcirc,xr,yr
-        real xcirc,ycirc,tempVSr(450,3000),neVSr(450,3000)
-c 3000 correspond a un arrondi de pi*900 i.e. circonference du plus grand rayon possible
+        real xcirc,ycirc,tempVSr(450,3000),neVSr(450,3000),rmin
+c 3000 correspond a un arrondi de 2*pi*900 i.e. circonference du plus grand rayon possible
 c dimension max de 3000 permet de traiter une nebuleuse de 450 pixel de rayon au max 
 c      	 r=rayon de reference
 c 	 rt=rayon temporaire calculé à chaque point
 c	inserer le programe java pour les coordonées ici
-        print*,'debut'
+        rmin=5.
         do i=1,450
-           ndata(i)=1
+           ndatT(i)=0
+           ndatN(i)=0
            do j=1,3000
               tempVSr(i,j)=0.
               neVSr(i,j)=0.
@@ -54,22 +56,34 @@ c	inserer le programe java pour les coordonées ici
         read(1,*) xc,yc
         read(1,*) xr,yr
         rcirc=sqrt((xr-xc)**2.+(yr-yc)**2.)
-        print*,rcirc,'toto'
+	rcirc = 10000
 	do i=1,nbx
 	   do j=1,nby
                 if (int(temp(i,j)).ne.0) then
                   x=real(i)
                   y=real(j)
 		  rt=sqrt((x-xc)**2.+(y-yc)**2.)
-                  print*,int(rt)
-		  if (rt.le.rcirc) then
-                     tempVSr(nint(rt),ndata(nint(rt)))=temp(i,j)
-                     neVSr(nint(rt),ndata(nint(rt)))=densit(i,j)
-                     ndata(nint(rt))=ndata(nint(rt))+1
+		  if ((rt.le.rcirc).and.(rt.gt.rmin)) then
+                     ndatT(nint(rt))=ndatT(nint(rt))+1
+                     tempVSr(nint(rt),ndatT(nint(rt)))=temp(i,j)
+		  endif
+                  endif
+             enddo
+         enddo
+         do i=1,nbx
+	   do j=1,nby 
+               if (int(densit(i,j)).ne.0) then
+                  x=real(i)
+                  y=real(j)
+		  rt=sqrt((x-xc)**2.+(y-yc)**2.)
+		  if ((rt.le.rcirc).and.(rt.gt.rmin)) then
+                     ndatN(nint(rt))=ndatN(nint(rt))+1
+                     neVSr(nint(rt),ndatN(nint(rt)))=densit(i,j)
 		  endif
                 endif
+
 	   enddo
 	enddo
         close(unit=1)
         return
-        end
+        end subroutine
