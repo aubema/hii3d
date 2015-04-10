@@ -10,7 +10,7 @@ c Cette routine prend une matrice, créé l'en-tête d'un fichier VTK et la réd
    17   format(f6.3)
    18   format(i9)
 
-        open(unit=2,file='formationmatrice3.vtk',status="replace")
+        open(unit=2,file='formationmatrice3.vtk',status="unknown")
 
   
 c Le bloc suivant créé l'entête du format .vtk
@@ -33,23 +33,14 @@ c Le bloc suivant créé l'entête du format .vtk
 c Chaque itération créé une donnée de la matrice
 c Dans le ficher VTK, la hiérarchie des axes est x --> y --> z  pour ce qui est de l'ordre
 
-        do k = 2, (int((numx+1)/3)-1)*3+1
-           do j = 2, (int((numy+1)/3)-1)*3+1
-               do i = 2, (int((numz+1)/3)-1)*3+1
-                temp=0.
-         do m = i-1, i+1
-           do n = j-1, j+1
-             do o = k-1, k+1
-              temp=temp+B(m,n,o)
-             end do
+        do i = 1,numx
+           do j = 1, numy
+               do k = 1, numz
+                  write(2,17) B(i,j,k)
+               end do
            end do
-         end do
-
-          write(2,17) temp
-              end do
-            end do
-          end do
-         close(unit=2)
+        end do
+        close(unit=2)
         return
         end
 

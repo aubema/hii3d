@@ -30,6 +30,7 @@ let xr=211
 let yr=95
 echo $xr $yr >> rond.in
 killall display
+echo "Running hii3d"
 ./hii3d
 echo "set style data lines" > sigmat.plot
 echo "plot 'sigmat.txt'" >> sigmat.plot

@@ -1,5 +1,7 @@
+c programme pour elargir la distribution en fonction de l epaisseur 
+c presumee de la nebuleuse 
         subroutine circle(sigma,nbx,nby)
-	real xc,yc,xr,xy,rcirc,rij,sigma(400,400)
+	real xc,yc,xr,xy,rcirc,rij,sigma(401,401)
         integer r,nbx,nby
         open(unit=1,file='rond.in',status='old')
         read(1,*) xc,yc
@@ -8,8 +10,12 @@
         close(unit=1)
         do i=1,nbx
             do j=1,nby
-                rij=sqrt((i-xc)**2.+(j-yc)**2.)
-                sigma(i,j)=sigma(i,j)*sqrt(2.*sqrt(rcirc**2.-rij**2.))
+                rij=sqrt((xc-i)**2.+(nby-j)**2.)
+                if (rij.le.rcirc) then
+                   sigma(i,j)=sigma(i,j)*sqrt(2.*sqrt(rcirc**2.-
+     +             rij**2.))
+                endif
             enddo
         enddo
-        end subroutine
+        return
+        end

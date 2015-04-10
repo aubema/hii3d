@@ -3,7 +3,7 @@ c	cette routine sert à couper en rond centrer
 	integer nx,ny,i,j,nbx,nby
 c        (xc,yc)=coordoné du centre
 c        (xr,yr)=coordoné du rayon 
-        real rt,matrice(900,900),yc,xc,x,y,rcirc,xr,yr
+        real rt,matrice(401,401),yc,xc,x,y,rcirc,xr,yr
         real xcirc,ycirc
 c      	 r=rayon de reference
 c 	 rt=rayon temporaire calculé à chaque point

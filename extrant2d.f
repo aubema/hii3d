@@ -20,16 +20,16 @@ c
 c Contact: martin.aube@cegepsherbrooke.qc.ca
 c
 c
-       subroutine extrant2d (outfile,valeur,nom,xcell0,ycell0,pixsiz,
+       subroutine extrant2d (outfil,valeur,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)
        integer width
-       real valeur(400,400),xcell0,ycell0,gain,offset
-       real valeurprint(400,400)
+       real valeur(401,401),xcell0,ycell0,gain,offset
+       real valprint(401,401)
        integer i,j,nbx,nby,valmax
        character*12 nom
-       character*40 outfile
-       print*,'Ecriture du fichier de ',nom,': ',outfile
-       open(unit=1,file=outfile,status='unknown')
+       character*40 outfil
+       print*,'Ecriture du fichier de ',nom,': ',outfil
+       open(unit=1,file=outfil,status='unknown')
        write(1,1000) ! Tag P2).
        write(1,1001) xcell0
        write(1,1002) ycell0
@@ -39,10 +39,10 @@ c
        write(1,*) nbx,nby,valmax
        do i=1,nbx ! Debut de la boucle sur toutes les cases en x.
        do j=1,nby ! Debut de la boucle sur toutes les cases en y.
-       valeurprint(i,j)=(valeur(i,j)-offset)/gain ! Transformation des donnees avec le gain et l'offset et recherche
+       valprint(i,j)=(valeur(i,j)-offset)/gain ! Transformation des donnees avec le gain et l'offset et recherche
        enddo ! Fin de la boucle sur toutes les cases en y.
        enddo
-       write(1,*) ((nint(valeurprint(i,j)),i=1,nbx),j=1,nby) ! Ecriture de toutes les donnees qui sont ensuite inscrites
+       write(1,*) ((nint(valprint(i,j)),i=1,nbx),j=1,nby) ! Ecriture de toutes les donnees qui sont ensuite inscrites
 c ! dans la matricel. Ce sont des boucles imbriquees dans la
 c ! fonction "write" qui couvrent tout le domaine delimite par nbx et nby.
 c ! L'increment de la boucle sur les ranges (latitute) est de -1 car

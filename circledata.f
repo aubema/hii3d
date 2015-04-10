@@ -33,18 +33,18 @@ c
 
 	subroutine circledata(nbx,nby,temp,densit,tempVSr,neVSr,ndatT,
      +  ndatN)
-	integer nx,ny,i,j,nbx,nby,ndatT(450),ndatN(450)
+	integer nx,ny,i,j,nbx,nby,ndatT(401),ndatN(401)
 c        (xc,yc)=coordoné du centre
 c        (xr,yr)=coordoné du rayon 
-        real rt,temp(900,900),densit(900,900),yc,xc,x,y,rcirc,xr,yr
-        real xcirc,ycirc,tempVSr(450,3000),neVSr(450,3000),rmin
+        real rt,temp(401,401),densit(401,401),yc,xc,x,y,rcirc,xr,yr
+        real xcirc,ycirc,tempVSr(401,3000),neVSr(401,3000),rmin
 c 3000 correspond a un arrondi de 2*pi*900 i.e. circonference du plus grand rayon possible
-c dimension max de 3000 permet de traiter une nebuleuse de 450 pixel de rayon au max 
+c dimension max de 3000 permet de traiter une nebuleuse de 401 pixel de rayon au max 
 c      	 r=rayon de reference
 c 	 rt=rayon temporaire calculé à chaque point
 c	inserer le programe java pour les coordonées ici
         rmin=5.
-        do i=1,450
+        do i=1,401
            ndatT(i)=0
            ndatN(i)=0
            do j=1,3000

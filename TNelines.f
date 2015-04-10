@@ -26,25 +26,25 @@ c    commentaires
 c    Copyright (C) 2013  Alexandre Carbonneau, Catherine Masson (Alexandrine), Maude Roy-Labbe (support moral important) et ELPHES+Guigui (support moral moins important)  
 c
 c        
-        subroutine TNelines(ncols, nlines,tempp,densit,SIIratio,
-     +  NIIratio)
-        real out(30,400,400),vect(1000000),vmin,vmax,gain,offset
-        real valeur(400,400),SIIratio(400,400),raies(400,400)
-        real sig2noise
-        integer i,j,nlines,ncols,pos,longueur,nfiles,n,ii
+        subroutine TNelines(ncols, nlines,tempp,densit,SIIrat,
+     +  NIIrat)
+        real out(30,401,401),vect(1000000),vmin,vmax,gain,offset
+        real valeur(401,401),SIIrat(401,401),raies(401,401)
+        real sig2no
+        integer i,j,nlines,ncols,pos,length,nfiles,n,ii
         character*20 namef(30)
-        character*40 outfile
+        character*40 outfil
         character*12 nom
-        real xcell0,ycell0,pixsiz,NIIratio(400,400),aptmp,dens
-        real densit(400,400),somme,pix,add
-        real tempp(400,400)
+        real xcell0,ycell0,pixsiz,NIIrat(401,401),aptmp,dens
+        real densit(401,401),somme,pix,add
+        real tempp(401,401)
         real distt,distv
         integer nbx,nby,valmax,SII6716,SII6731,SIIBx,SIIBy
         integer NII6584,NII5755,NIIBx,NIIBy,cor, box
-        real nor,cm, SIIratiom(400,400),NIIratiom(400,400)
+        real nor,cm, SIIrm(401,401),NIIrm(401,401)
         integer nx,ny,xcirc,ycirc
 c define the signal to noise ratio
-        sig2noise=3.
+        sig2no=3.
 c define the interpolation radius
         box=15
         open(unit=1,file='geometry.tmp',status='unknown')
@@ -57,13 +57,9 @@ c define the interpolation radius
         do n=1,nfiles
         print*,namef(n)
           open(unit=2,file=namef(n),status='unknown')
-c             longueur=(ncols-1)+(ncols+1)*nlines
-            longueur=ncols*nlines+ncols+nlines
-c           formule changée 24 oct. enlève le décalage
+            length=ncols*nlines+ncols+nlines
             read (2,*)
-             read(2,*) (vect(ii),ii=1,longueur)
-             
-
+            read(2,*) (vect(ii),ii=1,length)
           close(unit=2)
           vmin=1000000000.
           vmax=0.
@@ -80,20 +76,18 @@ c           formule changée 24 oct. enlève le décalage
                 endif
              enddo
            enddo
-           
-
 c  .pgm images of the original .fit images
           gain=(vmax-vmin)/65535.
           offset=vmin
-          outfile=namef(n)(1:9)//".pgm"
+          outfil=namef(n)(1:9)//".pgm"
           xcell0=0.
           ycell0=0.
           nom=namef(n)
           pixsiz=1.
-         nbx=ncols
+          nbx=ncols
           nby=nlines
           valmax=65535
-          call extrant2d (outfile,valeur,nom,xcell0,ycell0,pixsiz,
+          call extrant2d (outfil,valeur,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)
         enddo        
         do n=1,nfiles
@@ -131,70 +125,66 @@ c Ha__6563 est un test, il faut le remplacer par 5755.
 c Processus pour enleve le bruit des images de raies originales
         do i=1, ncols
           do j=1, nlines
-            if (out(SIIBx,i,j).lt.sig2noise) then
+            if (out(SIIBx,i,j).lt.sig2no) then
               out(SII6716,i,j)=0.
             endif
           enddo
         enddo
         do i=1, ncols
           do j=1, nlines
-            if (out(SIIBy,i,j).lt.sig2noise) then
+            if (out(SIIBy,i,j).lt.sig2no) then
               out(SII6731,i,j)=0.
             endif
           enddo
         enddo
         do i=1, ncols
           do j=1, nlines
-            if (out(NIIBx,i,j).lt.sig2noise) then
+            if (out(NIIBx,i,j).lt.sig2no) then
               out(NII6584,i,j)=0.
             endif
           enddo
         enddo
         do i=1, ncols
           do j=1, nlines
-            if (out(NIIBy,i,j).lt.sig2noise) then
+            if (out(NIIBy,i,j).lt.sig2no) then
               out(NII5755,i,j)=0.
             endif
           enddo
         enddo
-
+c
 c==============================================================================
 c Faire les ratios de SII et NII         
-c SIIratio
+c SIIrat
           do i=1,ncols
              do j=1,nlines
                 if (out(SII6731,i,j).eq.0.) then
-                  SIIratio(i,j)=0.
+                  SIIrat(i,j)=0.
                 else 
-                SIIratio(i,j)=out(SII6716,i,j)/out(SII6731,i,j)
-                  if (SIIratio(i,j).lt.0.2) then
-                    SIIratio(i,j)=0.
-                  else if (SIIratio(i,j).gt.2.) then
-                    SIIratio(i,j)=0.
+                SIIrat(i,j)=out(SII6716,i,j)/out(SII6731,i,j)
+                  if (SIIrat(i,j).lt.0.2) then
+                    SIIrat(i,j)=0.
+                  else if (SIIrat(i,j).gt.2.) then
+                    SIIrat(i,j)=0.
                   endif
                 endif
              enddo
           enddo
-c NIIratio (corriger le Ha)
+c NIIrat (corriger le Ha)
           do i=1,ncols
            do j=1,nlines
              if (out(NII5755,i,j).eq.0.) then
-               NIIratio(i,j)=0.
+               NIIrat(i,j)=0.
 c corriger le 1000/3 a 4/3
              else  
-            NIIratio(i,j)=(4.*out(NII6584,i,j))/(3.*out(NII5755,i,j))      
-                  if (NIIratio(i,j).lt.0.) then
-                    NIIratio(i,j)=0.
-                  else if (NIIratio(i,j).gt.300.) then
-                    NIIratio(i,j)=0.
+            NIIrat(i,j)=(4.*out(NII6584,i,j))/(3.*out(NII5755,i,j))      
+                  if (NIIrat(i,j).lt.0.) then
+                    NIIrat(i,j)=0.
+                  else if (NIIrat(i,j).gt.300.) then
+                    NIIrat(i,j)=0.
                   endif
               endif
            enddo
           enddo
-
-
-        
-
 c===================================================================================
 c Processus de calcul pour calculer la densite et la temperature 	
 c La densite electronique
@@ -202,18 +192,14 @@ c La densite electronique
              do j=1,nlines
              aptmp=8900.
              dens=0.
-             if ((NIIratio(i,j).ne.0.).and.(SIIratio(i,j).ne.0.)) then
+             if ((NIIrat(i,j).ne.0.).and.(SIIrat(i,j).ne.0.)) then
 c Si la valeur converge pas augmente le k
                somme=0.
                do k=1,10
-                 call intersii (dens, SIIratio(i,j),aptmp)                            ! routine qui retourne la densite si on lui donne temperature et ratio sii
+                 call intersii (dens, SIIrat(i,j),aptmp)                            ! routine qui retourne la densite si on lui donne temperature et ratio sii
                  densit(i,j)=dens
-                 call temperatureNII(NIIratio(i,j),dens,aptmp)                        ! cette routine retourne la temperature si on lui donne la densite et le ratio nii
+                 call temperatureNII(NIIrat(i,j),dens,aptmp)                        ! cette routine retourne la temperature si on lui donne la densite et le ratio nii
                  tempp(i,j)=aptmp
-c                 if (aptmp+dens.eq.somme) then 
-c                 goto 200
-c                 endif
-c                 somme=aptmp+dens
                enddo
 c Si le ratio est nul, les temperature et la densite ne sont pas consideres
              else
@@ -229,105 +215,6 @@ c Si le ratio est nul, les temperature et la densite ne sont pas consideres
                endif
              enddo
           enddo
-c================================================================================
-c trie pixel temperature
-c       do i=2, ncols-2
-c         do j=2, nlines-2
-c           pix=0
-c           if (tempp(i,j).ne.0.) then
-c            do n=i-1, i+1
-c               do m=j-1, j+1                           
-c                 if (tempp(n,m).ne.0.) then
-c                   pix=pix+1.
-c                 endif
-c               enddo
-c             enddo
-c           endif
-c           if (pix.lt.3.) then
-c             tempp(i,j)=0.
-c           endif
-c        enddo
-c       enddo
-c trie pixel densite
-c       do i=2, ncols-2
-c         do j=2, nlines-2
-c           pix=0
-c           if (densit(i,j).ne.0.) then
-c            do n=i-1, i+1
-c               do m=j-1, j+1                           
-c                 if (densit(n,m).ne.0.) then
-c                   pix=pix+1.
-c                 endif
-c               enddo
-c             enddo
-c           endif
-c           if (pix.lt.3.) then
-c             densit(i,j)=0.
-c           endif
-c        enddo
-c       enddo
-c===============================================================================
-c les images de densite et temperature en utilisant la ponderation
-c lissage de limage temperature par ponderation
-c       do i=box, ncols-box
-c         do j=box, nlines-box
-c           add=0.
-c           distt=0.          
-c           if (tempp(i,j).eq.0.) then
-c            do n=i-(box-1), i+(box-1)
-c               do m=j-(box-1), j+(box-1)
-c                 distv=0.                            
-c                   distv=sqrt((abs(i-n))**2.+(abs(j-m))**2.)
-c                   if (distv.eq.0.) then
-c                     distv=10.
-c                   endif
-c                   if (distv.lt.real(box)) then
-c                     if (tempp(n,m).ne.0.) then
-c                       distt=distt+1./distv
-c                       add=add+tempp(n,m)/(distv)
-c                     endif
-c                   endif
-c               enddo
-c             enddo
-c             tempp(i,j)=(add/distt)
-c             else
-c             tempp(i,j)=tempp(i,j)
-c           endif
-c        enddo
-c       enddo
-c        print*,'etape 1'
-c	call rond (nbx,nby,tempp)
-c        print*,'etape 2'
-c lissage de limage de densite par ponderation
-c       do i=box, ncols-box
-c         do j=box, nlines-box
-c           add=0.
-c           distt=0.
-c           if (densit(i,j).eq.0.) then
-c            do n=i-(box-1), i+(box-1)
-c               do m=j-(box-1), j+(box-1)
-c                 distv=0.                            
-c                   distv=sqrt((abs(i-n))**2.+(abs(j-m))**2.)
-c                   if (distv.eq.0.) then
-c                     distv=10.
-c                   endif
-c                   if (distv.lt.real(box)) then
-c                     if (densit(n,m).ne.0.) then
-c                       distt=distt+1./distv
-c                       add=add+densit(n,m)/(distv)
-c                     endif
-c                 endif
-c               enddo
-c             enddo
-c             densit(i,j)=(add/distt)
-c             else
-c             densit(i,j)=densit(i,j)
-c           endif
-c        enddo
-c       enddo
-c       print*,'etape 3'
-c       call rond (nbx,nby,densit)
-c       print*,'etape 4'
 c===================================================================================================
 c Cette section est dediee a imprimer toutes les images
 c Print image ratio SII
@@ -335,50 +222,50 @@ c Print image ratio SII
           vmax=0.
           do i=1,ncols
              do j=1,nlines
-                if (SIIratio(i,j).lt.vmin) then
-                  vmin=SIIratio(i,j)
+                if (SIIrat(i,j).lt.vmin) then
+                  vmin=SIIrat(i,j)
                 endif
-                if (SIIratio(i,j).gt.vmax) then
-                  vmax=SIIratio(i,j)
+                if (SIIrat(i,j).gt.vmax) then
+                  vmax=SIIrat(i,j)
                 endif
              enddo
           enddo        
           gain=(vmax-vmin)/65535.
           offset=vmin
-          outfile="SIIratio.pgm"
+          outfil="SIIrat.pgm"
           xcell0=0.
           ycell0=0.
-          nom="SIIratio"
+          nom="SIIrat"
           pixsiz=1.
           nbx=ncols
           nby=nlines
           valmax=65535
-          call extrant2d (outfile,SIIratio,nom,xcell0,ycell0,pixsiz,
+          call extrant2d (outfil,SIIrat,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)
-c print NIIratio
+c print NIIrat
           vmin=1000000000.
           vmax=0.
           do i=1,ncols
              do j=1,nlines
-                if (NIIratio(i,j).lt.vmin) then
-                  vmin=NIIratio(i,j)
+                if (NIIrat(i,j).lt.vmin) then
+                  vmin=NIIrat(i,j)
                 endif
-                if (NIIratio(i,j).gt.vmax) then
-                  vmax=NIIratio(i,j)
+                if (NIIrat(i,j).gt.vmax) then
+                  vmax=NIIrat(i,j)
                 endif
              enddo
           enddo         
           gain=(vmax-vmin)/65535.
           offset=vmin
-          outfile="NIIratio.pgm"
+          outfil="NIIrat.pgm"
           xcell0=0.
           ycell0=0.
-         nom="NIIratio"
+         nom="NIIrat"
           pixsiz=1.
           nbx=ncols
           nby=nlines
           valmax=65535
-          call extrant2d (outfile,NIIratio,nom,xcell0,ycell0,pixsiz,
+          call extrant2d (outfil,NIIrat,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)
           vmin=1000000000.
           vmax=0.
@@ -397,15 +284,15 @@ c Print image temperature pond
           enddo        
           gain=(vmax-vmin)/65535.
           offset=vmin
-          outfile="temperaturep.pgm"
+          outfil="temperature.pgm"
           xcell0=0.
           ycell0=0.
-          nom="temperaturep"
+          nom="temperature"
           pixsiz=1.
           nbx=ncols
           nby=nlines
           valmax=65535
-          call extrant2d (outfile,tempp,nom,xcell0,ycell0,pixsiz,
+          call extrant2d (outfil,tempp,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)  
 c Print image densite pondere          
           vmin=1000000000.
@@ -422,15 +309,15 @@ c Print image densite pondere
           enddo
           gain=(vmax-vmin)/65535.
           offset=vmin
-         outfile="densit.pgm"
+         outfil="density.pgm"
           xcell0=0.
           ycell0=0.
-          nom="densit"
+          nom="density"
           pixsiz=1.
           nbx=ncols
           nby=nlines
           valmax=65535
-          call extrant2d (outfile,densit,nom,xcell0,ycell0,pixsiz,
+          call extrant2d (outfil,densit,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)
         return
 	end 
