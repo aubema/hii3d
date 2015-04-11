@@ -40,15 +40,18 @@ c
         real vars(401,401,401),SIImod(401,401),vmin,vmax,xcell0,ycell0
         real NII3d(401,401,401),NIImod(401,401),NIIrat(401,401)
         real gain,offset,toverr,random,Ne(401,401,401),Te(401,401,401)
-        real Nemod(401,401)
+        real Nemod(401,401),rint,rathol,ine,ene,maxiNe,rijk
         integer Ntot(401),siz,taille,binf,bsup,binfz,bsupz,ni,nj,nk
         integer nbx, nby, ndata(401,401),ndatN(401),i,j,r,k,n
-        integer valmax,pixsiz,nmod
+        integer valmax,pixsiz,nmod,center
         character*20 namef(30)
         character*40 outfil,tdname
         character*12 nom
-        taille=5                                                       ! valeur maximale de 19
-        toverr=1.5                                                    ! ratio of the max thickness of the object over its lateral radius
+        taille=5                                                         ! valeur maximale de 19
+        toverr=1.                                                        ! ratio of the max thickness of the object over its lateral radius
+        print*,'Enter sampling window size, external radius, center hole
+     +   fraction, internal density and external density'
+        read*,taille,rcirc,rathol,ine,ene                                          ! hii3d prends en entree la taille de la fenetre et la faction du trou central vs le rayon de l'objet.
 c on prend les données de raies d'emission qu'on transforme en ratio de raies et 
 c en temperature et densite electronique avec Osterbrock
         call TNelines(nbx,nby,tempp,densip,SIIrat,NIIrat)
@@ -69,12 +72,12 @@ c calcul de la moyenne et de l ecart type pour chaque matrice 11x11
 c elargissement de l ecart type
         print*,'Increasing the standard deviations...'
 c        call circle(sigma,nbx,nby)
-        call ellipse(sigma,nbx,nby,toverr)
+        call ellipse(sigma,nbx,nby,toverr,rcirc)
 c faire les matrices 3D
 	open(unit=1,file='rond.in',status='old')
           read(1,*) xc,yc
           read(1,*) xr,yr
-          rcirc=sqrt((xr-xc)**2.+(yr-yc)**2.)
+c          rcirc=sqrt((xr-xc)**2.+(yr-yc)**2.)
         close(unit=1)
         do i=1,401
            do j=1,401
@@ -129,19 +132,35 @@ c les donnees si l objet n est pas parfaitement circulaire
               nk=0
               nj=nj+1
               do k=201-binfz,201+binfz,taille
+
+
+
+
                  nk=nk+1
+
+         rint=sqrt((201.-real(i))**2.+(201.-real(j))**2.+(201.
+     +   -real(k))**2.)
+         if (rint.ge.rathol*rcirc) then
+
                  random=rand()*fillfa(ni,nj)
 
                  if (random.le.1.) then  
               
                     call gaussienne(moy,sigma,i,j,k,nby,R3D,xc,yc,
-     +              intmin,intmax,toverr)
+     +              intmin,intmax,toverr,rcirc)
                     SII3d(ni,nj,nk)=R3D
 
                  else
                     SII3d(ni,nj,nk)=0.
                     print*,ni,nj,nk
                  endif
+
+
+
+         else 
+             SII3d(ni,nj,nk)=0.
+         endif
+
 
               enddo
            enddo
@@ -209,13 +228,19 @@ c calcul de la moyenne et de l ecart type pour chauque matrice 11x11
         call moyecart(nbx,nby,taille,square,ndata,moy,sigma)
 c elargissement de l ecart type
         print*,'Increasing the standard deviations...'
-c        call circle(sigma,nbx,nby)
-        call ellipse(sigma,nbx,nby,toverr)
+c        call circle(sigma,nbx,nby,rcirc)
+        call ellipse(sigma,nbx,nby,toverr,rcirc)
+
+
+        print*,'bidon'
+
+
+
 c faire les matrices 3D
 	open(unit=1,file='rond.in',status='old')
           read(1,*) xc,yc
           read(1,*) xr,yr
-          rcirc=sqrt((xr-xc)**2.+(yr-yc)**2.)
+c          rcirc=sqrt((xr-xc)**2.+(yr-yc)**2.)
         close(unit=1)
         do i=1,401
            do j=1,401
@@ -266,18 +291,35 @@ c les donnees si l objet n est pas parfaitement circulaire
               nj=nj+1
               do k=201-binfz,201+binfz,taille
                  nk=nk+1
+
+
+
+         rint=sqrt((201.-real(i))**2.+(201.-real(j))**2.+(201.
+     +   -real(k))**2.)
+         if (rint.ge.rathol*rcirc) then
+
+
+
                  random=rand()*fillfa(ni,nj)
 c                 print*,random,fil
 
                  if (random.le.1.) then  
               
                     call gaussienne(moy,sigma,i,j,k,nby,R3D,xc,yc,
-     +              intmin,intmax,toverr)
+     +              intmin,intmax,toverr,rcirc)
                     NII3d(ni,nj,nk)=R3D
                  else
                     NII3d(ni,nj,nk)=0.
 c        print*,ni,nj,nk
                  endif
+
+
+
+         else 
+             NII3d(ni,nj,nk)=0.
+         endif
+
+
 
               enddo
            enddo
@@ -334,7 +376,8 @@ c
 c===================================================================================
 c Processus de calcul pour calculer la densite et la temperature 	
 c La densite electronique
-         miniNe=10000.
+         miniNe=100000.
+         maxiNr=0.
          do k=1,nk
             do i=1,ni
                do j=1,nj
@@ -347,21 +390,33 @@ c Si la valeur converge pas augmente le k
                      do n=1,10
                         call intersii (dens, SII3d(i,j,k),aptmp)                            ! routine qui retourne la densite si on lui donne temperature et ratio sii
 
-c a partir dici cest phil qui essaie de quoi
-                        if ((dens.lt.miniNe) .and. (dens.ne.0)) then 
-                        miniNe=dens
-                        endif
-c et ca finit la partie de phil
+
+
 
                         Ne(i,j,k)=dens
                         call temperatureNII(NII3d(i,j,k),dens,aptmp)                        ! cette routine retourne la temperature si on lui donne la densite et le ratio nii
                         Te(i,j,k)=aptmp
                      enddo
+c a partir dici cest phil qui essaie de quoi
+                        if ((dens.lt.miniNe) .and. (dens.ne.0.)) then 
+                        miniNe=dens
+                        endif
+c et ca finit la partie de phil
+
+                        if ((dens.gt.maxiNe) .and. (dens.ne.0.)) then 
+                        maxiNe=dens
+                        endif
 c Si le ratio est nul, les temperature et la densite ne sont pas consideres
                   else
                      Ne(i,j,k)=0.
                      Te(i,j,k)=0.
  200              endif
+                  center=nj/2+1
+                  rijk=real(taille)*sqrt(real((j-center)**2+
+     +            (i-center)**2+(k-center)**2))
+                  if ((Ne(i,j,k).eq.0.).and.(rijk.gt.rcirc*rathol)) 
+     +            Ne(i,j,k)=ene
+                  
                enddo
             enddo
          enddo
@@ -374,6 +429,7 @@ c Si le ratio est nul, les temperature et la densite ne sont pas consideres
                enddo
             enddo
          enddo
+         print*,Ne(center,center,center)
          tdname='Ne3D.txt'
          print*,'Writing 3D Ne matrix...'
          call WriteIFrIT(ni,nj,nk,Ne,tdname)

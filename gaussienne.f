@@ -1,6 +1,6 @@
 c       Ce programme sert a fournir une valeur aleatoire de temperature ou de densite pour un rayon donne, sur une gaussienne.
         subroutine gaussienne(moy,sigma,i,j,k,nby,R3D,xc,yc,intmin,
-     +  intmax,toverr)
+     +  intmax,toverr,rcirc)
         real moy(401,401),sigma(401,401),alea(2000000)
         real e,pi,Fmax,xmin,xmax,Inte,y,R3D,F,r,phi
         real intmin,intmax,random
@@ -35,7 +35,7 @@ c modelisation avec une ellipsoide et les stats locales dans le plan image
         open(unit=1,file='rond.in',status='old')
           read(1,*) xc,yc
           read(1,*) xr,yr
-          rcirc=sqrt(real((xr-xc)**2.+(yr-yc)**2.))
+c          rcirc=sqrt(real((xr-xc)**2.+(yr-yc)**2.))
         close(unit=1)
         r=sqrt(real(i-201)**2.+real(j-201)**2.)
         thick2=nint(toverr*rcirc*sqrt(1-(r/rcirc)**2.))
