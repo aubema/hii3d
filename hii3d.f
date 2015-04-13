@@ -47,7 +47,7 @@ c
         character*20 namef(30)
         character*40 outfil,tdname
         character*12 nom
-        taille=5                                                         ! valeur maximale de 19
+        taille=3                                                         ! valeur maximale de 19
         toverr=1.                                                        ! ratio of the max thickness of the object over its lateral radius
         print*,'Enter sampling window size, external radius, center hole
      +   fraction, internal density and external density'
