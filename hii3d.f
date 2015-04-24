@@ -41,6 +41,7 @@ c
         real NII3d(401,401,401),NIImod(401,401),NIIrat(401,401)
         real gain,offset,toverr,random,Ne(401,401,401),Te(401,401,401)
         real Nemod(401,401),rint,rathol,ine,ene,maxiNe,rijk
+        real SIIresol(401,401), NIIresol(401,401)
         integer Ntot(401),siz,taille,binf,bsup,binfz,bsupz,ni,nj,nk
         integer nbx, nby, ndata(401,401),ndatN(401),i,j,r,k,n
         integer valmax,pixsiz,nmod,center
@@ -69,6 +70,23 @@ c        call histo(square,taille)
 c calcul de la moyenne et de l ecart type pour chaque matrice 11x11
         print*,'Calculating standard deviations and averages'
         call moyecart(nbx,nby,taille,square,ndata,moy,sigma)
+c changement de resolution du ratio
+          open(unit=1,file='rond.in',status='old')
+          read(1,*) xc,yc
+          read(1,*) xr,yr
+          close(unit=1)
+        binf=(nint(rcirc)+10)/taille*taille 
+        ni=0
+        do i=int(xc)-binf,int(xc)+binf,taille
+           nj=0
+           ni=ni+1
+           do j=int(yc)-binf,int(yc)+binf,taille
+              nj=nj+1
+              SIIresol(ni,nj)=moy(i,j)
+           enddo
+        enddo
+        
+
 c elargissement de l ecart type
         print*,'Increasing the standard deviations...'
 c        call circle(sigma,nbx,nby)
@@ -208,6 +226,31 @@ c                endif
           valmax=65535
           call extrant2d (outfil,SIImod,nom,xcell0,ycell0,pixsiz,
      + gain,offset,ni,nj,valmax)
+c Print image ratio SII observe
+         vmin=1000000000.
+          vmax=0.           
+           do i=1,ni
+             do j=1,nj
+                   if (SIIresol(i,j).lt.vmin) then
+                      vmin=SIIresol(i,j)
+                   endif
+                   if (SIIresol(i,j).gt.vmax) then
+                      vmax=SIIresol(i,j)
+                   endif
+             enddo
+          enddo
+          gain=(vmax-vmin)/65535.
+          offset=vmin
+          outfil="SIIresol.pgm"
+          xcell0=0.
+          ycell0=0.
+          nom="SIIratio"
+          pixsiz=1.
+          valmax=65535
+          call extrant2d (outfil,SIIresol,nom,xcell0,ycell0,pixsiz,
+     + gain,offset,ni,nj,valmax)          
+
+
 c write output 3D file
          tdname='SIIratio3D.txt'
          print*,'Writing 3D matrix...'
@@ -226,6 +269,21 @@ c        call histo(square,taille)
 c calcul de la moyenne et de l ecart type pour chauque matrice 11x11
         print*,'Calculating standard deviations and averages'
         call moyecart(nbx,nby,taille,square,ndata,moy,sigma)
+c changement de resolution du ratio
+        open(unit=1,file='rond.in',status='old')
+          read(1,*) xc,yc
+          read(1,*) xr,yr
+          close(unit=1)
+        binf=(nint(rcirc)+10)/taille*taille 
+        ni=0
+        do i=int(xc)-binf,int(xc)+binf,taille
+           nj=0
+           ni=ni+1
+           do j=int(yc)-binf,int(yc)+binf,taille
+              nj=nj+1
+              NIIresol(ni,nj)=moy(i,j)
+           enddo
+        enddo
 c elargissement de l ecart type
         print*,'Increasing the standard deviations...'
 c        call circle(sigma,nbx,nby,rcirc)
@@ -368,6 +426,32 @@ c                endif
           valmax=65535
           call extrant2d (outfil,NIImod,nom,xcell0,ycell0,pixsiz,
      + gain,offset,ni,nj,valmax)
+
+c Print image ratio NII observe
+         vmin=1000000000.
+          vmax=0.           
+           do i=1,ni
+             do j=1,nj
+                   if (NIIresol(i,j).lt.vmin) then
+                      vmin=NIIresol(i,j)
+                   endif
+                   if (NIIresol(i,j).gt.vmax) then
+                      vmax=NIIresol(i,j)
+                   endif
+             enddo
+          enddo
+          gain=(vmax-vmin)/65535.
+          offset=vmin
+          outfil="NIIresol.pgm"
+          xcell0=0.
+          ycell0=0.
+          nom="NIIratio"
+          pixsiz=1.
+          valmax=65535
+          call extrant2d (outfil,NIIresol,nom,xcell0,ycell0,pixsiz,
+     + gain,offset,ni,nj,valmax)          
+
+
 c write output 3D file
          tdname='NIIratio3D.txt'
          print*,'Writing 3D matrix...'
