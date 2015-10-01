@@ -1,0 +1,51 @@
+Readme
+ hii3d
+Les fichiers lines2TNe sont des programmes qui vont lire les images d'origine sous la forme .fit, vont enlever le bruit*** et vont les transformer en image de ratio et ensuite les transformer en images de température et de densité. Par la suite, ils vont procéder a faire un tri des points et faire une interpolation de l'image de température et de densité.  
+
+***Lines2TNe.f est le programme qui utilise une image de bruit pour toutes les images de raies. Nous utilisons avec ce programme les images de type fit écrites comme ceci: "NII_6584.fit".
+
+***lines2TNe_multibruit.f est le programme qui utilise une image de BRUIT sur IMAGE pour chaque raies. Nous utilisons ce programme avec les images de type fit écrites comme ceci: "NII6584-b.fit" (image de bruit), "NII6584-s.fit" (image)
+
+***Lines2TNe_lissage.f est un programme qui represente mieux la nebuleuse car il met des données partout, ce qui voudrait dire qu'il y a du gaz partout dans limage. Par contre, ce programme est EXTRÊMEMENT LONG à calculer. Il est programmé exactement comme "Lines2TNe.f", sauf pour le lissage de l'image.
+
+Pour démarrer le programme, il faut dabord compiler les programmes fortran:
+
+   "gfortran  lines2TNe_multibruit.f extrant2d.f  intersii.f TemperatureNII.f rond.f -o lines2TNe"
+
+et par la suite démarrer le programme**** (avant il faut initialiser megaprog.bash avec: "chmod a+x megaprog.bash"):  ./megaprog.bash
+
+**** s'assurer que dans le megaprog.bash utilise le bon fichier fortran
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Le programme "stat.f" contrôle la partie de l'analyse d'une image. Il utilise une analyse de Fourier pour chaque ligne et colonne de l'image et sort les statistiques d'amplitude et longueur d'onde. Pour l'utiliser, il faut d'abord compiler le programme et ses sous-routines:
+
+   "gfortran  stat.f extractline.f extractcol.f extractrayon.f dephasage.f intrants2d.f tribubble.f fourier.f -o statistik"
+
+et ensuite exécuter le programme 
+
+   "./stat"
+
+Le programme créé une courbe de distribution pour chaque harmonique et ce, pour la longueur d'onde et pour l'amplitude. Dans le programme stat.f, on peut choisir le nombre d'harmoniques, le nombre d'intervalles sur la largeur totale (-6500 à 6500).
+
+Il faudra observer la pertinence de la transformée en ondelettes, elle pourrait être meilleure que la transformée de fourier. Il faudrait alors remplacer fourier.f (et sa propre sous-routine tribubble.f) par un nouveau programme d'ondelettes.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Guide d'utilisation de Mayavi2
+
+1) Installation
+
+Ouvrir le terminal, puis: 
+
+   "sudo apt-get install mayavi2"
+
+2) Utilisation
+
+Pour partir le programme, simplement écrire "mayavi2" dans le terminal. Dans le programme, les modules "volume" et "outline" sont les plus utiles pour visualisar des données. Dans le module Volume, on peut changer l'échelle de couleur sur la gauche dans le but de faire ressortir les contrastes. Dans le module Volume, volet "property", s'assurer que le "Shade" ne soit pas sélectionné, il réduit les contrastes pour rien.
+
+Si vous essayez d'ouvrir une matrice 700x700x1200 (Soit la résolution des images de température et densité, prolongées en 3d), le programme risque de planter, surtout sur les ordinateurs plus faibles. Il est donc important de réduire ces matrices avant de les visualiser avec "reductionmatrice.f90", qui créé aussi l'en-tête nécessaire pour mayavi2.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+

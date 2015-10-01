@@ -1,0 +1,124 @@
+  792  gfortran lines2TNe_multibruit.f -o lines2TNe
+  793  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f -o lines2TNe
+  794  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+  806  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+  810  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+  826  gfortran lines2TNe_multibruit.f -o 
+  827  gfortran lines2TNe_multibruit.f -o lines2TNe_multibruit.f
+  829  gfortran lines2TNe_multibruit.f -o lines2TNe
+  830  gfortran  lines2TNe.f extrant2d.f  intersii.f températureNII.f -o lines2TNe
+  832  gfortran  lines2TNe.f extrant2d.f  intersii.f TempératureNII.f -o lines2TNe
+  833  gfortran  lines2TNe.f extrant2d.f  intersii.f TemperatureNII.f -o lines2TNe
+  895  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+  919  gfortran -0 lines2TNe_multibruit.f
+  920  gfortran -o lines2TNe_multibruit.f
+  921  gfortran lines2TNe_multibruit.f -o lines2TNe
+  925  gfortran rond.f -o rond
+  926  gfortran lines2TNe_multibruit.f -o lines2TNe
+  928  gfortran lines2TNe_multibruit.f -o lines2TNe
+  929  gfortran rond.f -o rond
+  931  gfortran rond.f -o rond
+  933  gfortran lines2TNe_multibruit.f rond.f extrant2d.f-o lines2TNe
+  934  gfortran lines2TNe_multibruit.f rond.f extrant2d.f -o lines2TNe
+  936  gfortran lines2TNe_multibruit.f rond.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+  999  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+ 1000  gfortran lines2TNe_multibruit.f rond.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+ 1002  gfortran lines2TNe_multibruit.f rond.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+ 1027  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f -o lines2TNe
+ 1028  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1118  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1119  gfortran extractrayon.f90 intrants2d.f -o extractrayon
+ 1120  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1141  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1145  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1147  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1148  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1150  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1151  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1152  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1153  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1154  gfortran extractrayon.f intrants2d.f -o extractrayon<
+ 1155  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1246  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1247  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1248  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1249  gfortran extractrayon.f intrants2d.f -o extractrayon
+ 1250  gfortran stat.f fourier.f extractrayon.f -o stat
+ 1251  gfortran stat.f fourier.f extractrayon.f instrants2d.f -o stat
+ 1252  gfortran stat.f fourier.f extractrayon.f intrants2d.f -o stat
+ 1253  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f -o stat
+ 1256  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f -o statistik
+ 1263  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f -o statistik
+ 1293  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f -o statistik
+ 1295  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f -o statistik
+ 1297  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f -o statistik
+ 1300  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f -o statistik
+ 1301  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1340  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1342  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1344  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1346  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1348  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1350  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1352  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1354  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1356  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1358  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1360  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1362  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1364  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1366  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1368  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1370  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1372  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1374  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1378  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1385  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1404  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1409  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1412  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1414  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1416  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1418  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1420  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1422  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1424  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1426  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1428  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1430  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1432  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1434  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1436  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1438  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1440  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1442  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1444  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1446  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1448  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1450  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1481  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1482  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1486  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1506  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1507  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1508  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1509  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1510  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1519  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1520  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1521  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1522  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1588  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1589  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1593  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1594  gfortran stat.f fourier.f extractrayon.f intrants2d.f tribubble.f dephasage.f -o statistik
+ 1595  gfortran lines2TNe_multibruit.f extrant2d.f intersii.f TemperatureNII.f rond.f -o lines2TNe
+ 1606  gfortran random.f -o Random
+ 1607  gfortran donnesgaus4.f -o donnesgaus4
+ 1680  gfortran -o prime prime(1).f95
+ 1681  gfortran -o prime prime.f95
+ 1683  sudo apt-get install gfortran
+ 1685  sudo apt-get install gfortran
+ 1686  gfortran -o prime prime.f95
+ 1689  history | grep gfortr
+ 1690  history | grep gfortr > hitorique-des-commandes-2013-2014
