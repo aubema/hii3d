@@ -1,0 +1,15 @@
+cd
+mkdir svn
+cd svn
+svn checkout http://sand.googlecode.com/svn/trunk/ sand
+cd sand
+sudo ln -s  /usr/bin/gfortran /usr/local/bin/g77
+bash makeSAND
+sudo cp -f * /usr/local/bin/
+sudo apt-get install libcfitsio3-dev
+sudo apt-get install libcfitsio3
+sudo apt-get install libastro-fits-cfitsio-perl 
+cd fits-utils
+sudo ./fits-utility
+
+
