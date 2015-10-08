@@ -23,23 +23,20 @@ echo $n >> geometry.tmp
 for i in $list
 do echo $i.txt >> geometry.tmp #add image name.txt in geometry.
 done
-#display $i &        de-commenter pour retourner au mode interactif
+#display $i         de-commenter pour retourner au mode interactif
 #ATTENTION remettre les let sans commentaire lorsque tests finis.
 #echo "Enter central star coordinate with the wheel button"          de-commenter pour retourner au mode interactif
 #read xc yc         # de-commenter pour retourner au mode interactif
               #let xc=xc+1    EST_CE ENCORE UTILE
               #let yc=yc+1
-let xc=154         # commenter pour retourner au mode interactif
-let yc=161         # commenter pour retourner au mode interactif
-echo $xc $yc > rond.in
-#echo "Enter radius coordinate with the wheel button"
-#read xr yr
-# il faudrait remettre en place un calcul du rayon a transmettre via rond.in a prog-hii3d.f pour le rendre interactif
-#let xr=xr+1
-#let yr=yr+1
-#let xr=211
-#let yr=95
-#echo $xr $yr >> rond.in
+
+#read rcirc          # de-commenter pour retourner au mode interactif
+let xe=154         # commenter pour retourner au mode interactif
+let ye=161         # commenter pour retourner au mode interactif
+let rcirc=70        # commenter pour retourner au mode interactif
+
+echo $xe $ye > rond.in
+echo $rcirc >> rond.in  # rayon externe des coquilles
 killall display
 #helping the random number to be random
 t=`date '+%S'`

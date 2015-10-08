@@ -37,8 +37,9 @@ c  Declaration des variables
         real square(401,401,401)
         real moy(401,401),sigma(401,401)
         real SIIrat(401,401),NIIrat(401,401)
-        real R3D,xr,xc,yr,yc,rcirc,intmin, intmax,xc1,yc1,xc2,yc2
-        real rcirc1,rcirc2,xr1,yr1,xr2,yr2,xr3,yr3,xr4,yr4,xe,ye
+        real R3D,xc,yc,rcirc,intmin, intmax,xc1,yc1,xc2,yc2               ! xc,yc = position temporaire de la coquille
+        real rcirc1,rcirc2,xr1,yr1,xr2,yr2,xr3,yr3,xr4,yr4,xe,ye          ! xe,ye = position de l etoile centrale  
+        real xr,yr                                                        ! xr,yr sont les coord de la limite externe de l objet
         real NII3d(401,401,401),SII3d(401,401,401),fillfa(401,401)
         real SIImod(401,401),NIImod(401,401),vmin,vmax,xcell0,ycell0
         real gain,offset,toverr,random,Ne(401,401,401),Te(401,401,401)
@@ -71,92 +72,26 @@ c On demande les coordonnees de l'etoile centrale (154,161) et les dimensions de
 
         open(unit=2,file='rond.in',status='unknown')
            read(2,*) xe,ye
+           read(2,*) rcirc
         close(unit=2)
         open(unit=2,file='geometry.tmp',status='unknown')
 c       Enter the dimensions of the image
            read(2,*) imagx,imagy
         close(unit=2)
 
-c On trouve le cote le plus proche de l'etoile, pour l'utiliser comme borne superieure
-c a la boucle de distet.
-
-        distmin=sqrt(real((0.-xe)**2.+(imagy/2.-ye)**2.))
-        dist2=sqrt(real((imagx-xe)**2.+(imagy/2.-ye)**2.))         
-         if (distmin.gt.dist2) then 
-            distmin=dist2
-         endif
-        dist3=sqrt(real((imagx/2.-xe)**2.+(0.-ye)**2.))
-         if (distmin.gt.dist3) then 
-            distmin=dist3
-         endif
-        dist4=sqrt(real((imagx/2.-xe)**2.+(imagy-ye)**2.))
-         if (distmin.gt.dist4) then 
-            distmin=dist4
-         endif
-
-c On trouve le cote le plus loin de l'etoile, pour l'utiliser comme borne superieure
-c a la boucle de rcirc.
-
-        distmax=sqrt(real((0.-xe)**2.+(imagy/2.-ye)**2.))
-        dist2=sqrt(real((imagx-xe)**2.+(imagy/2.-ye)**2.))         
-         if (distmax.lt.dist2) then 
-            distmax=dist2
-         endif
-        dist3=sqrt(real((imagx/2.-xe)**2.+(0.-ye)**2.))
-         if (distmax.lt.dist3) then 
-            distmax=dist3
-         endif
-        dist4=sqrt(real((imagx/2.-xe)**2.+(imagy-ye)**2.))
-         if (distmax.lt.dist4) then 
-            distmax=dist4
-         endif
-          
-c On commence les boucles pour faire varier tous les parametres variables.
-c ATTENTION enlever les commentaires lorsque le programme est pret.
-c        do taille=5,11
-c             rathol=-1.
-c         do bcl1=0,10
-c             rathol=rathol+0.1
-c              ine=-10.                                      
-c          do bcl2=0,5
-c              ine=ine+10.
-c               ene=-10.
-c           do bcl3=0,5
-c               ene=ene+10.
-c                toverr=0.
-c            do bcl4=1,5
-c                toverr=toverr+1.
-c                 angx=-20.
-c             do bcl5=0,9
-c                 angx=angx+20.
-c                  angy=-20.
-c              do bcl6=0,9
-c                  angy=angy+20.
-c                  distet=-(real(taille))
-c               do bcl7=0,distmin,taille
-c                  distet=distet+real(taille)
-c                   teta=-20.
-c                do bcl8=0,18
-c                   teta=teta+20.
-c                 do bcl9=1,distmax,taille
-c                    rcirc=rcirc+real(taille)
 
 c ATTENTION. Cette partie (jusqua l'indice toto.) sera a effacer du moment
 c que le processus de boucle des variables sera operationnel. Pour l'instant,
 c il est possible de modifier les variables directement ici.
-c                   xc=154.
-c                   yc=161.
                     angx=45.
                     angy=45.
-                    distet=10.
+                    distet=10.                                            ! distance entre l'etoile centrale et chaque coquille
                     teta=110.
-                    rad=pi*teta/180.
-                    xc1=distet*cos(rad)+xe
+                    rad=pi*teta/180.                                      ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
+                    xc1=distet*cos(rad)+xe                                ! (xc1,yc1) et (xc2,yc2) sont les coord centrales de chaque coquille
                     yc1=distet*sin(rad)+ye
                     xc2=distet*cos(rad+pi)+xe
                     yc2=distet*sin(rad+pi)+ye
-c rcirc est le rayon externe de la nebuleuse. Ce parametre change d'un objet a l'autre
-                    rcirc=70.
 c taille est la fenetre glissante utilisee pour calculer les statistiques spatiales de l'objet
                     taille=5.
 c rathol est la fraction du rayon externe correspondant a la taille de cavite interne
@@ -169,6 +104,10 @@ c etirement de l'ellipse (a valider grand axe sur petit axe? )
                     toverr=1.
 c toto.
 
+
+
+c rcirc est le rayon externe de la nebuleuse. Ce parametre change d'un objet a l'autre
+                    print*,'rcirc=',rcirc
 c On commence la mega boucle (qui boucle seulement une fois) pour obtenir les deux matrices 3D.
         do h=1,2                                                                                       
 c Si c'est la premiere boucle, on travaille sur le premier cercle, sinon sur le deuxieme.
@@ -851,16 +790,6 @@ c On garde la meilleure compatibilite.
                                                                           ! la cote en pourcentage, pour pouvoir conserver le meilleur resultat. Il faut un if qui va sassurer de conserver la meilleure
                                                                           ! matrice et tous ses parametres.
 
-c                 enddo
-c                enddo
-c               enddo
-c              enddo
-c             enddo
-c            enddo
-c           enddo
-c          enddo
-c         enddo
-c        enddo
 c Fin du programme hii3d de creation d'une matrice 3D de la nebuleuse.
         stop
         end
