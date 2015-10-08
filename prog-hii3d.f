@@ -69,10 +69,13 @@ c ATTENTION. Faut-il encore mettre le +1 a chaque coordonnee ou l'utilisateur de
 
 c On demande les coordonnees de l'etoile centrale (154,161) et les dimensions de l'image
 
-        print*, 'Enter central star coordinate X Y'
-        read*,xe,ye
-c        print*, 'Enter the dimensions of the image'
-c        read*,imagx,imagy
+        open(unit=2,file='rond.in',status='unknown')
+           read(2,*) xe,ye
+        close(unit=2)
+        open(unit=2,file='geometry.tmp',status='unknown')
+c       Enter the dimensions of the image
+           read(2,*) imagx,imagy
+        close(unit=2)
 
 c On trouve le cote le plus proche de l'etoile, pour l'utiliser comme borne superieure
 c a la boucle de distet.

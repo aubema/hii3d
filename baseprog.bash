@@ -3,6 +3,7 @@
 # hii3d compiling script
 #
 #cd $HOME/svn/hii3d
+echo "toto"
 # echo "gfortran  hii3d.f TNelines.f extrant2d.f  intersii.f TemperatureNII.f ellipse.f squaredata.f moyecart.f gaussienne.f histo.f writeIFrIT.f interp.f -o hii3d"
 # gfortran  hii3d.f TNelines.f extrant2d.f  intersii.f TemperatureNII.f ellipse.f squaredata.f moyecart.f gaussienne.f histo.f writeIFrIT.f interp.f -o hii3d
 gfortran  prog-hii3d.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-ellipse.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
@@ -22,17 +23,18 @@ echo $n >> geometry.tmp
 for i in $list
 do echo $i.txt >> geometry.tmp #add image name.txt in geometry.
 done
-display $i &
+#display $i &        de-commenter pour retourner au mode interactif
 #ATTENTION remettre les let sans commentaire lorsque tests finis.
-#echo "Enter central star coordinate with the wheel button"
-#read xc yc
-#let xc=xc+1
-#let yc=yc+1
-#let xc=154
-#let yc=161
-#echo $xc $yc > rond.in
+#echo "Enter central star coordinate with the wheel button"          de-commenter pour retourner au mode interactif
+#read xc yc         # de-commenter pour retourner au mode interactif
+              #let xc=xc+1    EST_CE ENCORE UTILE
+              #let yc=yc+1
+let xc=154         # commenter pour retourner au mode interactif
+let yc=161         # commenter pour retourner au mode interactif
+echo $xc $yc > rond.in
 #echo "Enter radius coordinate with the wheel button"
 #read xr yr
+# il faudrait remettre en place un calcul du rayon a transmettre via rond.in a prog-hii3d.f pour le rendre interactif
 #let xr=xr+1
 #let yr=yr+1
 #let xr=211
