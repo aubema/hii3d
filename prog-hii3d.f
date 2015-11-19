@@ -34,7 +34,7 @@ c    Copyright (C) 2014  Alexandre Carbonneau, Catherine Masson, Maude Roy-Labbe
 c    Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
 c  Declaration des variables           
-        real square(401,401,401)
+        real square(401,401,225)
         real moy(401,401),sigma(401,401)
         real SIIrat(401,401),NIIrat(401,401)
         real R3D,xc,yc,rcirc,intmin, intmax,xc1,yc1,xc2,yc2               ! xc,yc = position temporaire de la coquille
@@ -93,7 +93,7 @@ c il est possible de modifier les variables directement ici.
                     xc2=distet*cos(rad+pi)+xe
                     yc2=distet*sin(rad+pi)+ye
 c taille est la fenetre glissante utilisee pour calculer les statistiques spatiales de l'objet
-                    taille=5.
+                    taille=7
 c rathol est la fraction du rayon externe correspondant a la taille de cavite interne
                     rathol=0.7
 c ine est la densite electronique a l'interieur de la cavite

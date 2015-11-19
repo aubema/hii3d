@@ -28,15 +28,15 @@ c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice 
 c
 	subroutine squaredata(nbx,nby,taille,ratio,square,ndata)
 	integer nx,ny,i,j,nbx,nby,ndata(401,401),taille,demibox,ii,jj
-        integer nbmax,k
-        real ratio(401,401),square(401,401,401) 
-        nbmax=taille*taille/2
+        integer nbmin,k
+        real ratio(401,401),square(401,401,225)                                   ! 225 est le nombre de valeurs dans une fenetre de 15x15, 401 est la taille max de l'image
+        nbmin=10                                                                  ! nombre de donnees minimales dans la fenetre glissante pour proceder au calculs statistiques - en bas de 10 on estime que les stats ne sont pas significatives
         demibox=taille/2
 c On 'vide' les matrices ndata et square, en les remplissant de zeros.
         do i=1,nbx
            do j=1,nby
               ndata(i,j)=0
-              do k=1,401                                                          ! k est le nombre de donnees max dans taille x taille.
+              do k=1,225                                                          ! k est le nombre de donnees max dans taille x taille.
                  square(i,j,k)=0.
               enddo
            enddo
@@ -54,7 +54,7 @@ c pour cette coordonnee i,j et la kieme donnee.
 		   endif
                 enddo
               enddo
-              if (ndata(i,j).lt.nbmax) then 
+              if (ndata(i,j).lt.nbmin) then 
                  ndata(i,j)=0
               endif
             enddo

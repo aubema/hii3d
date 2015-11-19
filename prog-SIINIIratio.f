@@ -45,6 +45,7 @@ c On definit le rayon d'interpolation.
            read(1,*) nfiles
            do n=1,nfiles
               read(1,*) namef(n)
+c lecture de la liste des images de signal et bruit (fichiers .fits)
            enddo
 	close(unit=1)
         do n=1,nfiles
@@ -158,8 +159,10 @@ c Ratio SII
                 else 
                 SIIrat(i,j)=out(SII6716,i,j)/out(SII6731,i,j)
                   if (SIIrat(i,j).lt.0.2) then
+c la courbe du ratio de Osterbrock a un minimum a ~0.4 on utilise 0.2 en raison du bruit (a verifier)
                     SIIrat(i,j)=0.
                   else if (SIIrat(i,j).gt.2.) then
+c la courbe du ratio de Osterbrock a un maximum ~1.45 on utilise 2.0 en raison du bruit (a verifier)
                     SIIrat(i,j)=0.
                   endif
                 endif
@@ -172,7 +175,7 @@ c Ratio NII
              if (out(NII5755,i,j).eq.0.) then
                NIIrat(i,j)=0.
              else  
-               NIIrat(i,j)=(4.*out(NII6584,i,j))/(3.*out(NII5755,i,j))       ! on corrige le 1000/3 a 4/3 
+               NIIrat(i,j)=(4.*out(NII6584,i,j))/(3.*out(NII5755,i,j))       ! on corrige a 4/3 la probabilite de transision des raies 6548 et 6583 
                   if (NIIrat(i,j).lt.0.) then
                     NIIrat(i,j)=0.
                   else if (NIIrat(i,j).gt.300.) then

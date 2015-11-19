@@ -29,7 +29,7 @@ c    Copyright (C) 2014  Martin Aubé, Thierry Daviault, Philippe Karan, Alice R
 c
         subroutine moysigma (nbx,nby,taille,square,ndata,moy,sigma)
         integer i,j,k,ndata(401,401),nbx,nby,kmax,taille
-        real t,e,square(401,401,401),moy(401,401),sigma(401,401)
+        real t,e,square(401,401,225),moy(401,401),sigma(401,401)
         real r,xc,yc
         kmax=taille*taille
         open(unit=1,file='rond.in',status='unknown')
