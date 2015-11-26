@@ -34,16 +34,15 @@ c    Copyright (C) 2014  Alexandre Carbonneau, Catherine Masson, Maude Roy-Labbe
 c    Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
 c  Declaration des variables           
-        real squareS(401,401,225),squareN(401,401,225)
-        real moyS(401,401),moyN(401,401),sigmaS(401,401)
-        real sigmaN(401,401)
+        real sqrS(401,401,225),sqrN(401,401,225)
+        real moyS(401,401),moyN(401,401),sigS(401,401)
+        real sigN(401,401)
         real SIIrat(401,401),NIIrat(401,401)
         real R3D,xc,yc,rcirc,intmnN,intmnS,intmxN,intmxS,xc1
         real yc1,xc2,yc2                                                  ! xc,yc = position temporaire de la coquille
         real rcirc1,rcirc2,xr1,yr1,xr2,yr2,xr3,yr3,xr4,yr4,xe,ye          ! xe,ye = position de l etoile centrale  
         real xr,yr                                                        ! xr,yr sont les coord de la limite externe de l objet
-        real NII3d(401,401,401),SII3d(401,401,401),filfaN(401,401)
-        real filfaS(401,401)
+        real NII3d(401,401,401),SII3d(401,401,401)
         real SIImod(401,401),NIImod(401,401),vmin,vmax,xcell0,ycell0
         real gain,offset,toverr,random,Ne(401,401,401),Te(401,401,401)
         real Nev1(401,401,401),Nev2(401,401,401),Ne2(401,401,401)
@@ -53,10 +52,10 @@ c  Declaration des variables
         real dist2,dist3,dist4,distmax,angx,angy
         real thickc,anglez,anglex
         integer taille,binf,ni,nj,nk
-        integer nbx, nby, ndataS(401,401),ndataN(401,401),i,j,r,k,n,h
+        integer nbx, nby, ndatS(401,401),ndatN(401,401),i,j,r,k,n,h
         integer valmax,pixsiz,nmod,center,imagx,imagy,x,y,z
         integer bcl1,bcl2,bcl3,bcl4,bcl5,bcl6,bcl7,bcl8,bcl9
-        integer inirand,fill(401,401,401)
+        integer inirand,object(401,401,401)
         character*20 namef(30)
         character*40 outfil,tdname
         character*12 nom
@@ -103,7 +102,7 @@ c ene est la densite electronique a l'exterieur de la nebuleuse (r>rcirc)
 
 c fabrication d'un matrice de flag pour identifier ou est le gaz 0=outside, 1=inside, 2=gaz
         call dblshell(nbx,nby,rcirc,thickc,anglez,anglex,
-     +  distet,fill,xe,ye)    
+     +  distet,object,xe,ye)    
 
 
 c rcirc est le rayon externe de la nebuleuse. Ce parametre change d'un objet a l'autre
@@ -133,8 +132,8 @@ c Debut de la transformation en 3D du ratio SII, a l'aide de SIIrat.
 c
 c On appelle la routine squaredata qui cree les matrices taille x taille centrees sur chaque pixel.
 
-        call squaredata(nbx,nby,taille,SIIrat,squareS,ndataS)
-        call squaredata(nbx,nby,taille,NIIrat,squareN,ndataN)
+        call squaredata(nbx,nby,taille,SIIrat,sqrS,ndatS)
+        call squaredata(nbx,nby,taille,NIIrat,sqrN,ndatN)
 c
 c Les statistiques locales seront faites a l'interieur de la matrice square et ndata est le nombre
 c de donnees valides dans le carre.
@@ -142,14 +141,14 @@ c
 c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour chaque fenetre 
 c taille x taille centree sur chaque pixel.
 c    
-        call moysigma(nbx,nby,taille,squareS,ndataS,moyS,sigmaS)
-        call moysigma(nbx,nby,taille,squareN,ndataN,moyN,sigmaN)
+        call moysigma(nbx,nby,taille,sqrS,ndatS,moyS,sigS)
+        call moysigma(nbx,nby,taille,sqrN,ndatN,moyN,sigN)
 
 c
 c elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
-c valeurs de 2 dans la matrice fill
-        call ensigma(sigmaS,nbx,nby,fill)
-        call ensigma(sigmaN,nbx,nby,fill)
+c valeurs de 2 dans la matrice object
+        call ensigma(sigS,nbx,nby,object)
+        call ensigma(sigN,nbx,nby,object)
 
 
 
@@ -183,8 +182,6 @@ c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3
 c
         do i=1,401
            do j=1,401
-              filfaN(i,j)=1.
-              filfaS(i,j)=1.
               do k=1,401
                  SII3d(i,j,k)=-1.
                  NII3d(i,j,k)=-1.
@@ -210,16 +207,16 @@ c
               nj=nj+1
               do k=201-binf,201+binf,taille
                  nk=nk+1
-                 if (fill(i,j,k).eq.2) then
+                 if (object(i,j,k).eq.2) then
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
 c dans un ensemble de données cree a partir de moy et sigma.             
-                     call gaussienne(moyS,sigmaS,i,j,k,nby,R3D,
+                     call gaussienne(moyS,sigS,i,j,k,R3D,
      +               intmnS,intmxS)
                      SII3d(ni,nj,nk)=R3D
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
 c dans un ensemble de données cree a partir de moy et sigma.
               
-                     call gaussienne(moyN,sigmaN,i,j,k,nby,R3D,
+                     call gaussienne(moyN,sigN,i,j,k,R3D,
      +               intmnN,intmxN)
                      NII3d(ni,nj,nk)=R3D
                  else 

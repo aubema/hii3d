@@ -24,7 +24,7 @@ c    fonction gaussienne construite a l'aide des moyennes et ecart-types.
 c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
-        subroutine gaussienne(moy,sigma,i,j,k,nby,R3D,intmin,
+        subroutine gaussienne(moy,sigma,i,j,k,R3D,intmin,
      +  intmax)
         real moy(401,401),sigma(401,401),alea(2000000)
         real e,pi,Fmax,xmin,xmax,Inte,y,R3D,F,r,phi
@@ -35,14 +35,14 @@ c
         n=1
         xmin=intmin
         xmax=intmax
-        if (sigma(ii,jj).ne.0.) then
-           Fmax=1./(sigma(ii,jj)*sqrt(2.*pi))/100.
+        if (sigma(i,j).ne.0.) then
+           Fmax=1./(sigma(i,j)*sqrt(2.*pi))/100.
            Inte=(xmax-xmin)/100.
            y=xmin+Inte/2.
            do while (y.le.xmax)
               y=y+Inte
-              F=1./(sigma(ii,jj)*sqrt(2.*pi))*e**(-1.*(y-moy(ii,jj))
-     +        **2./(2.*sigma(ii,jj)**2.))
+              F=1./(sigma(i,j)*sqrt(2.*pi))*e**(-1.*(y-moy(i,j))
+     +        **2./(2.*sigma(i,j)**2.))
               do m=1,nint(F/Fmax)
                  alea(n)=y
                  n=n+1
@@ -52,6 +52,7 @@ c On tire aleatoirement dans la gaussienne, et la valeur R3D sera ensuite
 c ajoutee a la matrice 3D dans hii3d.
            random=rand()
            R3D=alea(nint(random*real(n)))
+c         print*,'tata'
         else
            R3D=0.
         endif
