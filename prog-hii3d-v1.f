@@ -147,6 +147,8 @@ c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour cha
 
 c        print*,'Calculating standard deviations and averages'
         call moysigma(nbx,nby,taille,square,ndata,moy,sigma)
+c       elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
+        call en-sigma(sigma,nbx,nby,fill)
 
 c On obtient alors une matrice moy et une matrice sigma, qui represente l'ecart-type.
 
@@ -361,6 +363,10 @@ c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour cha
 
 c        print*,'Calculating standard deviations and averages'
         call moysigma(nbx,nby,taille,square,ndata,moy,sigma)
+c       elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
+        call en-sigma(sigma,nbx,nby,fill)
+
+
 c On imprime une image du ratio NII modelise.    
      
           vmin=0.
