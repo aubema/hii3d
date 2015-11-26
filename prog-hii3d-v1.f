@@ -34,13 +34,16 @@ c    Copyright (C) 2014  Alexandre Carbonneau, Catherine Masson, Maude Roy-Labbe
 c    Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
 c  Declaration des variables           
-        real square(401,401,225)
-        real moy(401,401),sigma(401,401)
+        real squareS(401,401,225),squareN(401,401,225)
+        real moyS(401,401),moyN(401,401),sigmaS(401,401)
+        real sigmaN(401,401)
         real SIIrat(401,401),NIIrat(401,401)
-        real R3D,xc,yc,rcirc,intmin, intmax,xc1,yc1,xc2,yc2               ! xc,yc = position temporaire de la coquille
+        real R3D,xc,yc,rcirc,intmnN,intmnS,intmxN,intmxS,xc1
+        real yc1,xc2,yc2                                                  ! xc,yc = position temporaire de la coquille
         real rcirc1,rcirc2,xr1,yr1,xr2,yr2,xr3,yr3,xr4,yr4,xe,ye          ! xe,ye = position de l etoile centrale  
         real xr,yr                                                        ! xr,yr sont les coord de la limite externe de l objet
-        real NII3d(401,401,401),SII3d(401,401,401),fillfa(401,401)
+        real NII3d(401,401,401),SII3d(401,401,401),filfaN(401,401)
+        real filfaS(401,401)
         real SIImod(401,401),NIImod(401,401),vmin,vmax,xcell0,ycell0
         real gain,offset,toverr,random,Ne(401,401,401),Te(401,401,401)
         real Nev1(401,401,401),Nev2(401,401,401),Ne2(401,401,401)
@@ -49,9 +52,9 @@ c  Declaration des variables
         real dens, aptmp, somme,pi,teta,rad,distet,distmin
         real dist2,dist3,dist4,distmax,angx,angy
         real thickc,anglez,anglex
-        integer taille,binf,bsup,binfz,bsupz,ni,nj,nk
-        integer nbx, nby, ndata(401,401),i,j,r,k,n,h,x,y,z
-        integer valmax,pixsiz,nmod,center,imagx,imagy
+        integer taille,binf,ni,nj,nk
+        integer nbx, nby, ndataS(401,401),ndataN(401,401),i,j,r,k,n,h
+        integer valmax,pixsiz,nmod,center,imagx,imagy,x,y,z
         integer bcl1,bcl2,bcl3,bcl4,bcl5,bcl6,bcl7,bcl8,bcl9
         integer inirand,fill(401,401,401)
         character*20 namef(30)
@@ -91,7 +94,8 @@ c il est possible de modifier les variables directement ici.
                     anglex=anglex*rad
                     anglez=anglez*rad                 
 c taille est la fenetre glissante utilisee pour calculer les statistiques spatiales de l'objet
-                    taille=7
+c la taille de 7 est fixee pour avoir une statistique potable sans trop degrader la resolution
+                    taille=5
 c ine est la densite electronique a l'interieur de la cavite
                     ine=30.
 c ene est la densite electronique a l'exterieur de la nebuleuse (r>rcirc)
@@ -108,120 +112,95 @@ c rcirc est le rayon externe de la nebuleuse. Ce parametre change d'un objet a l
            
 c================================================================================================
 c Entree des variables arbitraires. hii3d prend en entree la taille de la fenetre glissante, 
-c la faction du trou central vs le rayon de l'objet, le rayon exterieur de l'objet,
-c la densite interieur et exterieur de l'objet, et le facteur d'elargissement pour l'ellipse.
-c La variable taille a une valeur maximale de 19.
+c l epaisseur d une coquille, le rayon exterieur d une coquille,
+c la densite interieur et exterieur de l'objet
+c La variable taille a une valeur maximale de 15.
 
 c        print*,'Enter sampling window size, external radius, center hole
 c     +   fraction, internal density, external density and 
 c     +   ellipsoidal enlargement factor'
-c        read*,taille,rcirc,rathol,ine,ene,toverr 
+c        read*,taille,rcirc,rathol,ine,ene
 
 c On appelle la routine SIINIIratio qui prend les donnees de raies d'emission pour les transformer en ratio de raies.
 
         call SIINIIratio(nbx,nby,SIIrat,NIIrat)
 
 c On se retrouve alors avec une matrice de ratio de raies pour les deux raies d'emission, SII et NII.
-
-c        print*,'Image size:',nbx,'x',nby
-
+c
 c
 c ===============================================================================================
-c Debut de la transformation en 3D de la raie SII, a l'aide de SIIrat.
+c Debut de la transformation en 3D du ratio SII, a l'aide de SIIrat.
 c
 c On appelle la routine squaredata qui cree les matrices taille x taille centrees sur chaque pixel.
 
-        call squaredata(nbx,nby,taille,SIIrat,square,ndata)
+        call squaredata(nbx,nby,taille,SIIrat,squareS,ndataS)
+        call squaredata(nbx,nby,taille,NIIrat,squareN,ndataN)
+c
+c Les statistiques locales seront faites a l'interieur de la matrice square et ndata est le nombre
+c de donnees valides dans le carre.
+c
+c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour chaque fenetre 
+c taille x taille centree sur chaque pixel.
+c    
+        call moysigma(nbx,nby,taille,squareS,ndataS,moyS,sigmaS)
+        call moysigma(nbx,nby,taille,squareN,ndataN,moyN,sigmaN)
 
-c Les statistiques locales seront faites a l'interieur de la matrice square et ndata.
+c
+c elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
+c valeurs de 2 dans la matrice fill
+        call ensigma(sigmaS,nbx,nby,fill)
+        call ensigma(sigmaN,nbx,nby,fill)
 
-c Calcul de l'histogramme pour diagnostique seulement. Simplement enlever les indices de commentaires,
-c et s'assurer que le fichier prog-histo.f soit dans le bon repertoire.
 
-c        print*,'Producing histograms...'
-c        call histo(square,taille)
 
-c Il suffit ensuite de lire les fichiers crees par histo.
 
-c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour chaque matrice, soit chaque fenetre taille x taille.
 
-c        print*,'Calculating standard deviations and averages'
-        call moysigma(nbx,nby,taille,square,ndata,moy,sigma)
-c       elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
-        call en-sigma(sigma,nbx,nby,fill)
 
-c On obtient alors une matrice moy et une matrice sigma, qui represente l'ecart-type.
 
+
+
+
+c Lorsqu on ne change pas la resolution, la distribution des donnnees est trop smooth derriere
+c chaque pixel ce qui ne permet pas c de reproduire les grumeaux (clumps) presents sur l image observe.
+c De plus, on ne peut depasser la capacite de mocassin de 71*71*71.
 c Changement de resolution du ratio.
+c
+c ne pas depasser une dimension de 71x71x71 car c'est le maximum acceptable pour 
+c le modele mocassin
 
-          open(unit=1,file='rond.in',status='old')
-          read(1,*) xc,yc
-          close(unit=1)
-        binf=(nint(rcirc)+10)/taille*taille 
+        binf=(nint(rcirc)+nint(distet)+20)/taille*taille 
         ni=0
-        do i=int(xc)-binf,int(xc)+binf,taille
+        do i=int(xe)-binf,int(xe)+binf,taille
            nj=0
            ni=ni+1
-           do j=int(yc)-binf,int(yc)+binf,taille
+           do j=int(ye)-binf,int(ye)+binf,taille
               nj=nj+1
-              SIIresol(ni,nj)=moy(i,j)
+              SIIresol(ni,nj)=moyS(i,j)
+              NIIresol(ni,nj)=moyN(i,j)
            enddo
         enddo
-
-
-
-    
-
-
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
-
-	open(unit=1,file='rond.in',status='old')
-          read(1,*) xc,yc
-        close(unit=1)
+c
         do i=1,401
            do j=1,401
-              fillfa(i,j)=1.
+              filfaN(i,j)=1.
+              filfaS(i,j)=1.
               do k=1,401
-                 SII3d(i,j,k)=-1. 
+                 SII3d(i,j,k)=-1.
+                 NII3d(i,j,k)=-1.
               enddo
            enddo
         enddo  
-c        print*,'Object radius=',rcirc,'pixels'
 
-c On trouve les bornes de la distribution.
-
-        binf=(nint(rcirc)+10)/taille*taille
-        binfz=(nint(rcirc*toverr)+10)/taille*taille
-c        print*,'Finding data range and filling factor...'
-           intmax=0.
-           intmin=10000.
-        do i=nint(xc)-binf,nint(xc)+binf
-           do j=nint(xc)-binf,nint(xc)+binf
-           fillfa(i,j)=(3.*sigma(i,j))/moy(i,j)
-           if (fillfa(i,j).gt.1.) then
-              sigma(i,j)=sigma(i,j)/fillfa(i,j)
-              fillfa(i,j)=fillfa(i,j)**2.                                         ! a cause du moyennage en 1/sqrt(N)
-              endif
-           if (moy(i,j)-3.*sigma(i,j).lt.intmin) then
-              intmin=moy(i,j)-3.*sigma(i,j)
-           endif
-           if (moy(i,j)+3.*sigma(i,j).gt.intmax) then
-              intmax=moy(i,j)+3.*sigma(i,j)
-           endif
-           if (intmin.lt.0.) intmin=0.
-           enddo
-        enddo
 
 c Selon le graphique d'Osterbrock, le min=0,45 et le max=1,43 pour la raie SII.
-        if (intmin.lt.0.45) intmin=0.45
-        if (intmax.gt.1.43) intmax=1.43
-
+        if (intmnS.lt.0.45) intmnS=0.45
+        if (intmxS.gt.1.43) intmxS=1.43
+c EST-CE QU IL FAUT METTRE CES LIMITES POUR NII?
+c
+c
 c On tire aleatoirement sur les distributions.
-
-c On depasse le rayon de la nebuleuse de 10 pixels pour etre certain d'avoir toutes 
-c les donnees si un objet n'est pas parfaitement circulaire.
-
-c        print*,'Tir aleatoire'
+c
         ni=0
         do i=201-binf,201+binf,taille
            nj=0
@@ -229,44 +208,35 @@ c        print*,'Tir aleatoire'
            do j=201-binf,201+binf,taille
               nk=0
               nj=nj+1
-              do k=201-binfz,201+binfz,taille
+              do k=201-binf,201+binf,taille
                  nk=nk+1
-         rint=sqrt((201.-real(i))**2.+(201.-real(j))**2.+(201.
-     +   -real(k))**2.)
-
-         ellint=((201.-real(i))**2.)/((rcirc*rathol)**2.)+((201.
-     +   -real(j))**2.)/((rcirc*rathol)**2.)+((201.-real(k))**2.)
-     +   /((rcirc*rathol*toverr)**2.)
-
-          if (ellint.ge.1.) then
-
-                 random=rand()*fillfa(ni,nj)
-
-                 if (random.le.1.) then  
-
+                 if (fill(i,j,k).eq.2) then
+c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
+c dans un ensemble de données cree a partir de moy et sigma.             
+                     call gaussienne(moyS,sigmaS,i,j,k,nby,R3D,
+     +               intmnS,intmxS)
+                     SII3d(ni,nj,nk)=R3D
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
 c dans un ensemble de données cree a partir de moy et sigma.
               
-                    call gaussienne(moy,sigma,i,j,k,nby,R3D,xc,yc,
-     +              intmin,intmax,toverr,rcirc)
-                    SII3d(ni,nj,nk)=R3D
-
-                 else
-                    SII3d(ni,nj,nk)=0.
+                     call gaussienne(moyN,sigmaN,i,j,k,nby,R3D,
+     +               intmnN,intmxN)
+                     NII3d(ni,nj,nk)=R3D
+                 else 
+                   SII3d(ni,nj,nk)=0.
+                   NII3d(ni,nj,nk)=0.
                  endif
-         else 
-             SII3d(ni,nj,nk)=0.
-         endif
               enddo
            enddo
-         enddo
-
+        enddo
 c Fin de la creation de la matrice 3D.
-c Nous possedons alors une matrice SII3d en 3D, remplie de ratios de raies.
-
+c Nous possedons alors des matrice SII3d et NII3d en 3D, remplie de ratios de raies.
+c
+c
+c ==============================================
 c Les etapes suivantes servent a produire differentes images pour SII.
 c On produit une image le long de la ligne de visee pour le ratio SII modelise.
-
+c
 c         print*,'Calculating m(odeled SII ratio...'
          do i=1,ni
             do j=1,nj
@@ -281,9 +251,9 @@ c         print*,'Calculating m(odeled SII ratio...'
                SIImod(i,j)=SIImod(i,j)/real(nmod)
             enddo
          enddo
-
+c
 c On imprime une image du ratio SII modelise.
-         
+c       
           vmin=1000000000.
           vmax=0.           
            do i=1,ni
@@ -341,166 +311,7 @@ c On appelle la routine WriteIFrIT qui transcript la matrice SII3d en donnees sc
 c utilisables par le programme IFrIT.
          call WriteIFrIT(ni,nj,nk,SII3d,tdname)
 c Fin de la demarche de creation de la matrice 3D de ratios pour SII.
-c
-c
-c ===================================================
-c Debut de la transformation en 3D de la raie NII, a l'aide de NIIrat.
-c
-c On appelle la routine squaredata qui cree les matrices taille x taille centrees sur chaque pixel.
-        call squaredata(nbx,nby,taille,NIIrat,square,ndata)
-        
-c Les statistiques locales seront faites a l'interieur de la matrice square et ndata.
-
-c Calcul de l'histogramme pour diagnostique seulement. Simplement enlever les indices de commentaires,
-c et s'assurer que le fichier prog-histo.f soit dans le bon repertoire.
-
-c        print*,'Producing histograms...'
-c        call histo(square,taille)
-
-c Il suffit ensuite de lire les fichiers crees par histo.
-
-c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour chaque matrice, soit chaque fenetre taille x taille.
-
-c        print*,'Calculating standard deviations and averages'
-        call moysigma(nbx,nby,taille,square,ndata,moy,sigma)
-c       elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
-        call en-sigma(sigma,nbx,nby,fill)
-
-
-c On imprime une image du ratio NII modelise.    
-     
-          vmin=0.
-          vmax=50.           
-c           do i=1,nbx
-c             do j=1,nby
-c                   if (sigma(i,j).lt.vmin) then
-c                      vmin=sigma(i,j)
-c                   endif
-c                   if (sigma(i,j).gt.vmax) then
-c                      vmax=sigma(i,j)
-c                   endif
-c             enddo
-c          enddo
-          gain=(vmax-vmin)/65535.
-          offset=vmin
-          outfil="sigmaNII.pgm"
-          xcell0=0.
-          ycell0=0.
-          nom="NIIsigma"
-          pixsiz=1.
-          valmax=65535
-c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
-          call extrant2d (outfil,sigma,nom,xcell0,ycell0,pixsiz,
-     + gain,offset,nbx,nby,valmax)
-
-
-
-c On obtient alors une matrice moy et une matrice sigma, qui represente l'ecart-type.
-
-c Changement de resolution du ratio.
-
-        open(unit=1,file='rond.in',status='old')
-          read(1,*) xc,yc
-          close(unit=1)
-        binf=(nint(rcirc)+10)/taille*taille 
-        ni=0
-        do i=int(xc)-binf,int(xc)+binf,taille
-           nj=0
-           ni=ni+1
-           do j=int(yc)-binf,int(yc)+binf,taille
-              nj=nj+1
-              NIIresol(ni,nj)=moy(i,j)
-           enddo
-        enddo
-
-
-c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
-
-	open(unit=1,file='rond.in',status='old')
-          read(1,*) xc,yc
-        close(unit=1)
-        do i=1,401
-           do j=1,401
-              fillfa(i,j)=1.
-              do k=1,401
-                 NII3d(i,j,k)=-1. 
-              enddo
-           enddo
-        enddo  
-c        print*,'Object radius=',rcirc,'pixels'
-
-c On trouve les bornes de la distribution.
-
-        binf=(nint(rcirc)+10)/taille*taille
-        binfz=(nint(rcirc*toverr)+10)/taille*taille
-c        print*,'Finding data range and filling factor...'
-           intmax=-1.
-           intmin=100000.
-        do i=nint(xc)-binf,nint(xc)+binf
-           do j=nint(xc)-binf,nint(xc)+binf
-           fillfa(i,j)=(3.*sigma(i,j))/moy(i,j)
-           if (fillfa(i,j).gt.1.) then
-              sigma(i,j)=sigma(i,j)/fillfa(i,j)
-              fillfa(i,j)=fillfa(i,j)**2.                                         ! a cause du moyennage en 1/sqrt(N)
-           endif
-           if (moy(i,j)-3.*sigma(i,j).lt.intmin) then
-              intmin=moy(i,j)-3.*sigma(i,j)
-           endif
-           if (moy(i,j)+3.*sigma(i,j).gt.intmax) then
-              intmax=moy(i,j)+3.*sigma(i,j)
-           endif
-           if (intmin.lt.0.) intmin=0.
-           enddo
-        enddo
-
-c On tire aleatoirement sur les distributions.
-
-c On depasse le rayon de la nebuleuse de 10 pixels pour etre certain d'avoir toutes 
-c les donnees si un objet n'est pas parfaitement circulaire.
-
-c        print*,'Tir aleatoire'
-        ni=0
-        do i=201-binf,201+binf,taille
-           nj=0
-           ni=ni+1
-           do j=201-binf,201+binf,taille
-              nk=0
-              nj=nj+1
-              do k=201-binfz,201+binfz,taille
-                 nk=nk+1
-         rint=sqrt((201.-real(i))**2.+(201.-real(j))**2.+(201.
-     +   -real(k))**2.)
-
-         ellint=((201.-real(i))**2.)/((rcirc*rathol)**2.)+((201.
-     +   -real(j))**2.)/((rcirc*rathol)**2.)+((201.-real(k))**2.)
-     +   /((rcirc*rathol*toverr)**2.)
-
-          if (ellint.ge.1.) then
-
-                 random=rand()*fillfa(ni,nj)
-
-                 if (random.le.1.) then  
-
-c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
-c dans un ensemble de données cree a partir de moy et sigma.  
-            
-                    call gaussienne(moy,sigma,i,j,k,nby,R3D,xc,yc,
-     +              intmin,intmax,toverr,rcirc)
-                    NII3d(ni,nj,nk)=R3D
-
-                 else
-                    NII3d(ni,nj,nk)=0.
-                 endif
-         else 
-             NII3d(ni,nj,nk)=0.
-         endif
-              enddo
-           enddo
-         enddo
-
-c Fin de la creation de la matrice 3D.
-c Nous possedons alors une matrice NII3d en 3D, remplie de ratios de raies.
-
+c ======================================
 c Les etapes suivantes servent a produire differentes images pour NII.
 c On produit une image le long de la ligne de visee pour le ratio NII modelise.
 

@@ -29,8 +29,10 @@ c    Copyright (C) 2014  Martin Aubé, Thierry Daviault, Philippe Karan, Alice R
 c
         subroutine moysigma (nbx,nby,taille,square,ndata,moy,sigma)
         integer i,j,k,ndata(401,401),nbx,nby,kmax,taille
-        real t,e,square(401,401,225),moy(401,401),sigma(401,
-        kmax=taille*
+        real t,e,square(401,401,225),moy(401,401),sigma(401,401)
+        
+        kmax=taille*taille
+    
 c On ouvre les fichiers textes.
         open(unit=1, file='sigma.txt',status='unknown')
         open(unit=2, file='moy.txt',status='unknown')

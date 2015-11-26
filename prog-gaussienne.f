@@ -24,47 +24,34 @@ c    fonction gaussienne construite a l'aide des moyennes et ecart-types.
 c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
-        subroutine gaussienne(moy,sigma,i,j,k,nby,R3D,xc,yc,intmin,
-     +  intmax,toverr,rcirc)
+        subroutine gaussienne(moy,sigma,i,j,k,nby,R3D,intmin,
+     +  intmax)
         real moy(401,401),sigma(401,401),alea(2000000)
         real e,pi,Fmax,xmin,xmax,Inte,y,R3D,F,r,phi
-        real intmin,intmax,random,toverr,rcirc,xc,yc
-        integer i,j,n,m,k,ii,jj,thick2
+        real intmin,intmax,random
+        integer i,j,n,m,k,ii,jj
         e=2.71828182846
         pi=3.14159265359
         n=1
         xmin=intmin
         xmax=intmax
-
-c On modelise avec une ellipsoide et les stats locales dans le plan image.      
-        open(unit=1,file='rond.in',status='old')
-          read(1,*) xc,yc
-        close(unit=1)
-        r=sqrt(real(i-201)**2.+real(j-201)**2.)
-        thick2=nint(toverr*rcirc*sqrt(1-(r/rcirc)**2.))
-        if (abs(k-201).le.thick2) then
-           ii=i-201+xc
-           jj=j-201+xc
-           if (sigma(ii,jj).ne.0.) then
-              Fmax=1./(sigma(ii,jj)*sqrt(2.*pi))/100.
-              Inte=(xmax-xmin)/100.
-              y=xmin+Inte/2.
-              do while (y.le.xmax)
-                 y=y+Inte
-                 F=1./(sigma(ii,jj)*sqrt(2.*pi))*e**(-1.*(y-moy(ii,jj))
-     +           **2./(2.*sigma(ii,jj)**2.))
-                 do m=1,nint(F/Fmax)
-                    alea(n)=y
-                    n=n+1
-                 enddo
+        if (sigma(ii,jj).ne.0.) then
+           Fmax=1./(sigma(ii,jj)*sqrt(2.*pi))/100.
+           Inte=(xmax-xmin)/100.
+           y=xmin+Inte/2.
+           do while (y.le.xmax)
+              y=y+Inte
+              F=1./(sigma(ii,jj)*sqrt(2.*pi))*e**(-1.*(y-moy(ii,jj))
+     +        **2./(2.*sigma(ii,jj)**2.))
+              do m=1,nint(F/Fmax)
+                 alea(n)=y
+                 n=n+1
               enddo
+           enddo
 c On tire aleatoirement dans la gaussienne, et la valeur R3D sera ensuite
 c ajoutee a la matrice 3D dans hii3d.
-              random=rand()
-              R3D=alea(nint(random*real(n)))
-           else
-              R3D=0.
-           endif
+           random=rand()
+           R3D=alea(nint(random*real(n)))
         else
            R3D=0.
         endif
