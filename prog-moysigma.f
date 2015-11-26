@@ -29,12 +29,8 @@ c    Copyright (C) 2014  Martin Aubé, Thierry Daviault, Philippe Karan, Alice R
 c
         subroutine moysigma (nbx,nby,taille,square,ndata,moy,sigma)
         integer i,j,k,ndata(401,401),nbx,nby,kmax,taille
-        real t,e,square(401,401,225),moy(401,401),sigma(401,401)
-        real r,xc,yc
-        kmax=taille*taille
-        open(unit=1,file='rond.in',status='unknown')
-           read(1,*) xc,yc
-        close(unit=1)
+        real t,e,square(401,401,225),moy(401,401),sigma(401,
+        kmax=taille*
 c On ouvre les fichiers textes.
         open(unit=1, file='sigma.txt',status='unknown')
         open(unit=2, file='moy.txt',status='unknown')
@@ -64,8 +60,7 @@ c On calcul l'ecart-type en chaque point.
                   endif
                enddo
                e=e/real(ndata(i,j))  
-               sigma(i,j)=sqrt(e)
-               r=sqrt(real(xc-i)**2.+real(yc-j)**2.)            
+               sigma(i,j)=sqrt(e)       
                write(1,*) i,j,ndata(i,j),sigma(i,j)
              endif
           enddo

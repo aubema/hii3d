@@ -26,11 +26,12 @@ c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice 
 c
         subroutine ellipse(sigma,nbx,nby,toverr,rcirc)
 	real xc,yc,xr,xy,rcirc,rij,sigma(401,401),toverr
-        integer r,nbx,nby
+c toverr est l etirement de l'ellipse (a valider grand axe sur petit axe? )
+        integer nbx,nby
         open(unit=1,file='rond.in',status='old')
         read(1,*) xc,yc
         close(unit=1)
-c La boucle fait en sorte de modifier tous les sigma existants.
+c La boucle fait en sorte de modifier tous les sigmas existants.
         do i=1,nbx
             do j=1,nby
                 rij=sqrt((xc-i)**2.+(nby-j)**2.)
