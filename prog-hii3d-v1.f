@@ -45,8 +45,8 @@ c  Declaration des variables
         real NII3d(401,401,401),SII3d(401,401,401)
         real SIImod(401,401),NIImod(401,401),vmin,vmax,xcell0,ycell0
         real gain,offset,toverr,random,Ne(401,401,401),Te(401,401,401)
-        real Nev1(401,401,401),Nev2(401,401,401),Ne2(401,401,401)
-        real Nemod(401,401),rint,rathol,ine,ene,rijk,Ne3(401,401,401)
+        real Nev1(401,401,401),Nev2(401,401,401)
+        real Nemod(401,401),rint,rathol,ine,ene,rijk
         real SIIresol(401,401), NIIresol(401,401)
         real dens, aptmp, somme,pi,teta,rad,distet,distmin
         real dist2,dist3,dist4,distmax,angx,angy
