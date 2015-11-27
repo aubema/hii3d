@@ -38,7 +38,6 @@ c La boucle fait en sorte de modifier tous les sigmas existants.
                 do k=1,401
                    if (fill(i,j,k).eq.2) then
                       nvoxel=nvoxel+1.
-                      print*,'fill'
                    endif
                 enddo
                 sigma(i,j)=sigma(i,j)*sqrt(nvoxel)

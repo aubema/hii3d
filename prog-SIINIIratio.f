@@ -25,7 +25,7 @@ c
 c    Copyright (C) 2013  Alexandre Carbonneau, Catherine Masson (Alexandrine), Maude Roy-Labbe (support moral important) 
 c    et ELPHES+Guigui (support moral moins important),Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c       
-        subroutine SIINIIratio(ncols, nlines,SIIrat,NIIrat)
+        subroutine SIINIIratio(ncols, nlines,SIIrat,NIIrat,sig2no)
         real out(30,401,401),vect(1000000),vmin,vmax,gain,offset
         real valeur(401,401),SIIrat(401,401),NIIrat(401,401)
         real sig2no,xcell0,ycell0,pixsiz
@@ -37,8 +37,6 @@ c
         character*12 nom
 c On prepare les donnees d'emission de raies.
 
-c On definit le signal sur bruit.
-        sig2no=3.
 c On definit le rayon d'interpolation.
         open(unit=1,file='geometry.tmp',status='unknown')
            read(1,*) ncols, nlines
@@ -49,7 +47,6 @@ c lecture de la liste des images de signal et bruit (fichiers .fits)
            enddo
 	close(unit=1)
         do n=1,nfiles
-c        print*,namef(n)
           open(unit=2,file=namef(n),status='unknown')
             length=ncols*nlines+ncols+nlines
             read (2,*)

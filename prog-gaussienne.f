@@ -24,37 +24,30 @@ c    fonction gaussienne construite a l'aide des moyennes et ecart-types.
 c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
-        subroutine gaussienne(moy,sigma,i,j,k,R3D,intmin,
-     +  intmax)
+        subroutine gaussienne(moy,sigma,i,j,k,R3D,xmin,
+     +  xmax)
         real moy(401,401),sigma(401,401),alea(2000000)
         real e,pi,Fmax,xmin,xmax,Inte,y,R3D,F,r,phi
-        real intmin,intmax,random
+        real random
         integer i,j,n,m,k,ii,jj
         e=2.71828182846
         pi=3.14159265359
-        n=1
-        xmin=intmin
-        xmax=intmax
-        if (sigma(i,j).ne.0.) then
-           Fmax=1./(sigma(i,j)*sqrt(2.*pi))/100.
-           Inte=(xmax-xmin)/100.
-           y=xmin+Inte/2.
-           do while (y.le.xmax)
-              y=y+Inte
-              F=1./(sigma(i,j)*sqrt(2.*pi))*e**(-1.*(y-moy(i,j))
-     +        **2./(2.*sigma(i,j)**2.))
-              do m=1,nint(F/Fmax)
-                 alea(n)=y
-                 n=n+1
-              enddo
+        n=0
+        Fmax=1./(sigma(i,j)*sqrt(2.*pi))/100.
+        Inte=(xmax-xmin)/100.
+        y=xmin+Inte/2.
+        do while (y.le.xmax)
+           y=y+Inte
+           F=1./(sigma(i,j)*sqrt(2.*pi))*e**(-1.*(y-moy(i,j))
+     +     **2./(2.*sigma(i,j)**2.))
+           do m=1,nint(F/Fmax)
+              alea(n)=y
+              n=n+1
            enddo
+        enddo
 c On tire aleatoirement dans la gaussienne, et la valeur R3D sera ensuite
 c ajoutee a la matrice 3D dans hii3d.
-           random=rand()
-           R3D=alea(nint(random*real(n)))
-c         print*,'tata'
-        else
-           R3D=0.
-        endif
+        random=rand()
+        R3D=alea(nint(random*real(n)))
         return
         end

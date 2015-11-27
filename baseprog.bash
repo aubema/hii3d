@@ -3,7 +3,6 @@
 # hii3d compiling script
 #
 #cd $HOME/svn/hii3d
-echo "toto"
 # echo "gfortran  hii3d.f TNelines.f extrant2d.f  intersii.f TemperatureNII.f ellipse.f squaredata.f moyecart.f gaussienne.f histo.f writeIFrIT.f interp.f -o hii3d"
 # gfortran  hii3d.f TNelines.f extrant2d.f  intersii.f TemperatureNII.f ellipse.f squaredata.f moyecart.f gaussienne.f histo.f writeIFrIT.f interp.f -o hii3d
 gfortran  prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d

@@ -49,21 +49,27 @@ c
 c    epaisseur des coquilles = thickc
 c    rhole = rayon interieur de la coquille = rcirc-thickc
         subroutine dblshell(nbx,nby,rcirc,thickc,anglez,anglex,
-     +  distet,fill,xe,ye)
-	real xe,ye,z1s,z2s,x1s,x2s,y1s,y2s,distet,anglez,anglex
-        real rhole2,thickc,r22,r12,rcirc2
+     +  dist,fill,xe,ye)
+	real xe,ye,z1s,z2s,x1s,x2s,y1s,y2s,dist,anglez,anglex
+        real rhole2,thickc,r22,r12,rcirc2,pi
         integer fill(401,401,401),i,j,k
 c    fill vaut 0 en-dehors des coquilles
 c    fill vaut 1 a l'interieur
 c    fill vaut 2 dans l epaisseur des coquilles
         integer nbx,nby
 c La boucle fait en sorte de modifier tous les sigmas existants.
-      z1s=distet*cos(anglez)+201
-      x1s=distet*cos(anglex)+xe
-      y1s=distet*sin(anglex)+ye
-      z2s=201-distet*cos(anglez)
-      x2s=xe-distet*cos(anglex)
-      y2s=ye-distet*sin(anglex)
+      pi=3.14159265359
+      if (xe.gt.ye) then
+         ze=xe
+      else
+         ze=ye
+      endif
+      z1s=dist*cos(anglez)+ze
+      x1s=dist*sin(anglez)*cos(anglex)+xe
+      y1s=-dist*sin(anglez)*sin(anglex)+ye
+      z2s=ze-dist*cos(anglez)
+      x2s=xe-dist*sin(anglez)*cos(anglex)
+      y2s=ye+dist*sin(anglez)*sin(anglex)
       rhole2=(rcirc-thickc)**2.
       rcirc2=rcirc**2.
       do k=1,401
@@ -72,14 +78,14 @@ c La boucle fait en sorte de modifier tous les sigmas existants.
           x=real(i)
           do j=1,401
             y=real(j)
+            fill(i,j,k)=0
             r12=(x-x1s)**2.+(y-y1s)**2.+(z-z1s)**2.
             r22=(x-x2s)**2.+(y-y2s)**2.+(z-z2s)**2.
             if ((r12.le.rcirc2).or.(r22.le.rcirc2)) then
                fill(i,j,k)=2
-            elseif ((r12.le.rhole2).or.(r22.le.rhole2)) then
+            endif
+            if ((r12.le.rhole2).or.(r22.le.rhole2)) then
                fill(i,j,k)=1
-            else
-               fill(i,j,k)=0
             endif
           enddo
         enddo
