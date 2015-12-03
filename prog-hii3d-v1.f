@@ -37,7 +37,8 @@ c  Declaration des variables
       real sqrS(401,401,225),sqrN(401,401,225)
       real moyS(401,401),moyN(401,401),sigmS(401,401)
       real sigmN(401,401),SIIrat(401,401),NIIrat(401,401)
-      real R3D,rcirc,intmnN,intmnS,intmxN,intmxS
+      real R3D,rcirc,intmnN(401,401),intmnS(401,401),intmxN(401,401)
+      real intmxS(401,401)
       real xe,ye                                                          ! xe,ye = position de l etoile centrale  
       real xr,yr                                                        
       real NII3d(401,401,401),SII3d(401,401,401)
@@ -48,6 +49,7 @@ c  Declaration des variables
       real dens,aptmp,somme,pi,rad,distet
       real angx,angy
       real thickc,nmod,ze,sig2no
+      real Tmin,Tmax,Nmin,Nmax
       integer box,ni,nj,nk,ii,jj,kk
       integer nbx,nby,ndatS(401,401),ndatN(401,401),i,j,k,n
       integer valmax,pixsiz,imagx,imagy,x,y,z
@@ -57,6 +59,10 @@ c  Declaration des variables
       character*40 outfil,tdname
       character*12 nom
       pi=3.14159265359
+      Tmin=5000.
+      Tmax=20000.
+      Nmin=5.
+      Nmax=1000.
       rad=pi/180.                                                         ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
 c ouvrir le fichier random.tmp pour rendre le nombre plus aleatoire
       open(unit=1,file='random.tmp',status='unknown')
@@ -80,16 +86,16 @@ c il est possible de modifier les variables directement ici.
 c
 c angx = inclination angle of the line joining the 2 shells centers 
 c relative to the horizontal right axis counterclock wise
-      angx=90.
+      angx=20.
 c angz = inclination angle of the line joining the 2 shells centers 
 c relative to the line of sight
-      angz=40.
+      angz=50.
 c distet = physical distance between the center of each shell
-      distet=40.    
+      distet=30.    
 c rcirc = shells radius (the 2 shells are identical in size and shape)                                      
-      rcirc=70.
+      rcirc=80.
 c thickc = thickness of the shells
-      thickc=30.
+      thickc=20.
 c minimal signal to noise ratio for the spectral lines images (sig2no)
       sig2no=6.
 c converting to radian
@@ -99,7 +105,7 @@ c box est la fenetre glissante utilisee pour calculer les statistiques
 c spatiales de l'objet la box de 7 est suggeree pour avoir une 
 c statistique potable sans trop degrader la resolution
 c La variable box a une valeur maximale de 15.
-      box=5
+      box=7
 c ine est la densite electronique a l'interieur de la cavite
       ine=30.
 c ene est la densite electronique a l'exterieur de la nebuleuse (r>rcirc)
@@ -142,8 +148,8 @@ c Uniquement les valeurs de 2 dans la matrice object seront denombres
       call ensigma(sigmS,nbx,nby,object)
       call ensigma(sigmN,nbx,nby,object)
 c
-c Lorsqu on ne change pas la resolution, la distribution des donnnees est trop smooth derriere
-c chaque pixel ce qui ne permet pas c de reproduire les grumeaux (clumps) presents sur l image observe.
+c Lorsqu on ne change pas la resolution, la distribution des donnees est trop smooth derriere
+c chaque pixel ce qui ne permet pas de reproduire les grumeaux (clumps) presents sur l image observee.
 c De plus, on ne peut depasser la capacite de mocassin de 71*71*71.
 c Solution = changement de resolution du ratio.
 c
@@ -179,31 +185,39 @@ c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3
 c
 c rechercher des bornes superieures et inferieures pour l histogramme +/- 3 sigma
       print*,'Calculation of the 3D NII and SII ratios...'
-      intmxN=0.
-      intmnN=10000.
-      intmxS=0.
-      intmnS=10000.
       do i=imin,imax,box
         do j=jmin,jmax,box
-          if (moyS(i,j)-3.*sigmS(i,j).lt.intmnS) then
-            intmnS=moyS(i,j)-3.*sigmS(i,j)
-          endif
-          if (moyN(i,j)-3.*sigmN(i,j).lt.intmnN) then
-            intmnN=moyN(i,j)-3.*sigmN(i,j)
-          endif
-          if (moyS(i,j)+3.*sigmS(i,j).gt.intmxS) then
-            intmxS=moyS(i,j)+3.*sigmS(i,j)
-          endif
-          if (moyN(i,j)+3.*sigmN(i,j).gt.intmxN) then
-            intmxN=moyN(i,j)+3.*sigmN(i,j)
-          endif
-          if (intmnS.lt.0.) intmnS=0.
-          if (intmnN.lt.0.) intmnN=0.
+          intmxN(i,j)=0.
+          intmnN(i,j)=10000.
+          intmxS(i,j)=0.
+          intmnS(i,j)=10000.
         enddo
       enddo
+      do i=imin,imax,box
+        do j=jmin,jmax,box
+          if (moyS(i,j)-3.*sigmS(i,j).lt.intmnS(i,j)) then
+            intmnS(i,j)=moyS(i,j)-3.*sigmS(i,j)
+          endif
+          if (moyN(i,j)-3.*sigmN(i,j).lt.intmnN(i,j)) then
+            intmnN(i,j)=moyN(i,j)-3.*sigmN(i,j)
+          endif
+          if (moyS(i,j)+3.*sigmS(i,j).gt.intmxS(i,j)) then
+            intmxS(i,j)=moyS(i,j)+3.*sigmS(i,j)
+          endif
+          if (moyN(i,j)+3.*sigmN(i,j).gt.intmxN(i,j)) then
+            intmxN(i,j)=moyN(i,j)+3.*sigmN(i,j)
+          endif
+          if (intmnS(i,j).lt.0.) intmnS(i,j)=0.
+          if (intmnN(i,j).lt.0.) intmnN=0.
+          if (intmnN(i,j).lt.0.) print*,'NII inferieur a 0'
 c Selon le graphique d'Osterbrock, le min=0.45 et le max=1.43 pour la raie SII.
-      if (intmnS.lt.0.45) intmnS=0.45
-      if (intmxS.gt.1.43) intmxS=1.43
+          if (intmnS(i,j).lt.0.45) intmnS(i,j)=0.45
+          if (intmnS(i,j).lt.0.45) print*,'moins que 0.45'
+          if (intmxS(i,j).gt.1.43) intmxS(i,j)=1.43
+          if (intmxS(i,j).gt.1.43) print*,'plus que 1.43'
+        enddo
+      enddo
+
 c EST-CE QU IL FAUT METTRE CES LIMITES POUR NII?
 c
 c On tire aleatoirement sur les distributions.
@@ -213,25 +227,27 @@ c
         jj=0
         ii=ii+1
         do j=jmin,jmax,box
+c          SIIverif(ii,jj)=0.
           kk=0
           jj=jj+1
           do k=kmin,kmax,box
             kk=kk+1
-            if (object(i,j,k).eq.2) then
+ 210        if (object(i,j,k).eq.2) then
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
 c dans un ensemble de données cree a partir de moy et sigma.     
               if (sigmS(i,j).ne.0.) then        
-                call gaussienne(moyS,sigmS,i,j,k,R3D,
-     +          intmnS,intmxS)
+                call gaussienne(moyS(i,j),sigmS(i,j),R3D,
+     +          intmnS(i,j),intmxS(i,j))
                 SII3d(ii,jj,kk)=R3D
               else
                 SII3d(ii,jj,kk)=0.
               endif
+c              SIIverif(ii,jj)=SIIverif(ii,jj)+SII3d(ii,jj,kk)
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
 c dans un ensemble de données cree a partir de moy et sigma.
               if (sigmN(i,j).ne.0.) then
-                call gaussienne(moyN,sigmN,i,j,k,R3D,
-     +          intmnN,intmxN)
+                call gaussienne(moyN(i,j),sigmN(i,j),R3D,
+     +          intmnN(i,j),intmxN(i,j))
                 NII3d(ii,jj,kk)=R3D
               else
                 NII3d(ii,jj,kk)=0.
@@ -240,24 +256,7 @@ c dans un ensemble de données cree a partir de moy et sigma.
               SII3d(ii,jj,kk)=0.
               NII3d(ii,jj,kk)=0.
             endif
-          enddo
-        enddo
-      enddo
-c
-c Processus de calcul pour calculer la densite electronique et la temperature electronique
-c a l'aide des ratio en 3D
-c Section de calcul pour la densite electronique.
-      print*,'Calculation of the 3D electron density & temperature...'
-      kk=0
-      do k=kmin,kmax,box
-        kk=kk+1
-        ii=0
-        do i=imin,imax,box
-          ii=ii+1
-          jj=0
-          do j=jmin,jmax,box
-            jj=jj+1
-            aptmp=8900.
+            aptmp=10000.
             dens=0.
 c Si la valeur ne converge pas, on augmente le k.
             if ((NII3d(ii,jj,kk).ne.0.).and.(SII3d(ii,jj,kk).ne.0.)) 
@@ -271,6 +270,11 @@ c On appelle la routine temperatureNII qui retourne la temperature si on lui don
                 call temperatureNII(NII3d(ii,jj,kk),dens,aptmp)                       
                 Te(ii,jj,kk)=aptmp
               enddo
+         if (((Te(ii,jj,kk).lt.Tmin).or.(Te(ii,jj,kk).gt.Tmax)).or.
+     +   ((Ne(ii,jj,kk).lt.Nmin).or.(Ne(ii,jj,kk).gt.Nmax))) then
+            print*,ii,jj,Te(ii,jj,kk),Ne(ii,jj,kk)
+            goto 210
+         endif
 c Si le ratio est nul, les temperature et la densite ne sont pas consideres.
             else
               Ne(ii,jj,kk)=0.
@@ -282,17 +286,8 @@ c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree a
             endif
             if (object(i,j,k).eq.1) then
               Ne(ii,jj,kk)=ine
-            endif                 
-          enddo
-        enddo
-      enddo
-      do k=1,nk
-        do i=1,ni
-          do j=1,nj
-c Si la densite excede 19000, on la remet a 0.
-            if (Ne(i,j,k).gt.19000.) then
-              Ne(i,j,k)=0.
-            endif
+            endif       
+            
           enddo
         enddo
       enddo
