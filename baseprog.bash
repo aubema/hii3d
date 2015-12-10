@@ -32,16 +32,65 @@ done
 #read rcirc          # de-commenter pour retourner au mode interactif
 let xe=154         # commenter pour retourner au mode interactif
 let ye=161         # commenter pour retourner au mode interactif
-let rcirc=70        # commenter pour retourner au mode interactif
-
+#let rcirc=70        # commenter pour retourner au mode interactif
+ni=0
+# ===============
+# definition des cas a modeliser
+angx="0 20 40"
+angz="0 30 60"
+distet="0 10 20"
+rcirc="60 70 80 90"
+thickc="5 15 25 35 70"
+ine="0 5"
+ene="0 100"
+#
+#
+angx=`echo $angx`
+angz=`echo $angz`
+distet=`echo $distet`
+rcirc=`echo $rcirc`
+thickc=`echo $thickc`
+ine=`echo $ine`
+ene=`echo $ene`
 echo $xe $ye > rond.in
 echo $rcirc >> rond.in  # rayon externe des coquilles
-killall display
-#helping the random number to be random
-t=`date '+%S'`
-echo $t > random.tmp
+# killall display
+#
+# debut des boucles sur tous les parametres
+nn=0
+for i in $angx
+   do for j in $angz 
+      do for k in $distet
+         do for l in $rcirc
+            do for m in $thickc
+               do for n in $ine
+                  do for o in $ene
+                     do #helping the random number to be random
+                        sec=`date '+%S'| sed 's/^0*//'`
+                        min=`date '+%M'| sed 's/^0*//'`
+                        day=`date '+%d'| sed 's/^0*//'`
+                        let ran=sec+min+day
+                        echo $ran > random.tmp
+                        echo "Input parameters for hii3d" > hii3d.input
+                        echo $i >> hii3d.input
+                        echo $j  >> hii3d.input
+                        echo $k >>  hii3d.input
+                        echo $l >>  hii3d.input
+                        echo $m >>  hii3d.input
+                        echo $n >> hii3d.input
+                        echo $o >> hii3d.input
+                        echo "Running hii3d"
+                        ./prog-hii3d
+                        file="Ne3D_angx-"$i"_angz-"$j"_distet-"$k"_rcric-"$l"_thickc-"$m"_ine-"$n"_ene-"$o".txt"
+                        echo $file
+                        mv Ne3D.txt $file
+                     done
+                  done
+               done
+            done
+         done
+      done
+   done
 
-echo "Running hii3d"
-./prog-hii3d
 
 

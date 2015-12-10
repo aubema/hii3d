@@ -80,22 +80,30 @@ c On demande les coordonnees de l'etoile centrale (154,161) et les dimensions de
 c Enter the dimensions of the image
         read(2,*) imagx,imagy
       close(unit=2)
-c ATTENTION. Cette partie (jusqua l'indice toto.) sera a effacer du moment
-c que le processus de boucle des variables sera operationnel. Pour l'instant,
-c il est possible de modifier les variables directement ici.
+c lecture des parametres variables du modele 3D
 c
+      open(unit=1,file='hii3d.input',status='unknown')
+         read(1,*)
+         read(1,*) angx
+         read(1,*) angz
+         read(1,*) distet
+         read(1,*) rcirc
+         read(1,*) thickc
+         read(1,*) ine
+         read(1,*) ene
+      close(unit=1)
 c angx = inclination angle of the line joining the 2 shells centers 
 c relative to the horizontal right axis counterclock wise
-      angx=20.
+c      angx=20.
 c angz = inclination angle of the line joining the 2 shells centers 
 c relative to the line of sight
-      angz=50.
+c      angz=50.
 c distet = physical distance between the center of each shell
-      distet=30.    
+c      distet=30.    
 c rcirc = shells radius (the 2 shells are identical in size and shape)                                      
-      rcirc=80.
+c      rcirc=80.
 c thickc = thickness of the shells
-      thickc=20.
+c      thickc=20.
 c minimal signal to noise ratio for the spectral lines images (sig2no)
       sig2no=6.
 c converting to radian
@@ -107,9 +115,9 @@ c statistique potable sans trop degrader la resolution
 c La variable box a une valeur maximale de 15.
       box=7
 c ine est la densite electronique a l'interieur de la cavite
-      ine=30.
+c      ine=30.
 c ene est la densite electronique a l'exterieur de la nebuleuse (r>rcirc)
-      ene=20.
+c      ene=20.
 c
 c fabrication d'un matrice de flag pour identifier ou est le gaz en 3D
 c 0=outside, 1=inside, 2=gaz
@@ -272,7 +280,7 @@ c On appelle la routine temperatureNII qui retourne la temperature si on lui don
               enddo
          if (((Te(ii,jj,kk).lt.Tmin).or.(Te(ii,jj,kk).gt.Tmax)).or.
      +   ((Ne(ii,jj,kk).lt.Nmin).or.(Ne(ii,jj,kk).gt.Nmax))) then
-            print*,ii,jj,Te(ii,jj,kk),Ne(ii,jj,kk)
+c            print*,ii,jj,Te(ii,jj,kk),Ne(ii,jj,kk)
             goto 210
          endif
 c Si le ratio est nul, les temperature et la densite ne sont pas consideres.
