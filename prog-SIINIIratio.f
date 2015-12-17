@@ -155,10 +155,10 @@ c Ratio SII
                   SIIrat(i,j)=0.
                 else 
                 SIIrat(i,j)=out(SII6716,i,j)/out(SII6731,i,j)
-                  if (SIIrat(i,j).lt.0.2) then
+                  if (SIIrat(i,j).lt.0.45) then
 c la courbe du ratio de Osterbrock a un minimum a ~0.4 on utilise 0.2 en raison du bruit (a verifier)
                     SIIrat(i,j)=0.
-                  else if (SIIrat(i,j).gt.2.) then
+                  else if (SIIrat(i,j).gt.1.43) then
 c la courbe du ratio de Osterbrock a un maximum ~1.45 on utilise 2.0 en raison du bruit (a verifier)
                     SIIrat(i,j)=0.
                   endif

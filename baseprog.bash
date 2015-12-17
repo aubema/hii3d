@@ -36,13 +36,13 @@ let ye=161         # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
-angx="0 20 40"
-angz="0 30 60"
-distet="0 10 20"
-rcirc="60 70 80 90"
-thickc="5 15 25 35 70"
-ine="0 5"
-ene="0 100"
+angx="135"
+angz="30"
+distet="20"
+rcirc="80"
+thickc="15"
+ine="5"
+ene="0"
 #
 #
 angx=`echo $angx`
