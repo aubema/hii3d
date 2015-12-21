@@ -39,7 +39,7 @@ c  Declaration des variables
       real sigmN(401,401),SIIrat(401,401),NIIrat(401,401)
       real R3D,rcirc,intmnN(401,401),intmnS(401,401),intmxN(401,401)
       real intmxS(401,401)
-      real xe,ye                                                          ! xe,ye = position de l etoile centrale  
+      real xe,ye                                                              ! xe,ye = position de l etoile centrale  
       real xr,yr                                                        
       real NII3d(401,401,401),SII3d(401,401,401)
       real SIImod(401,401),NIImod(401,401),vmin,vmax,xcell0,ycell0
@@ -47,14 +47,14 @@ c  Declaration des variables
       real Nemod(401,401),ine,ene
       real SIIresol(401,401),NIIresol(401,401)
       real dens,aptmp,somme,pi,rad,distet
-      real angx,angy
+      real angx,angy,shap(401,401,401)
       real thickc,nmod,ze,sig2no
       real Tmin,Tmax,Nmin,Nmax
       integer box,ni,nj,nk,ii,jj,kk
       integer nbx,nby,ndatS(401,401),ndatN(401,401),i,j,k,n
       integer valmax,pixsiz,imagx,imagy,x,y,z
       integer imin,imax,jmin,jmax,kmin,kmax
-      integer inirand,object(401,401,401)
+      integer inirand,fill(401,401,401)
       character*20 namef(30)
       character*40 outfil,tdname
       character*12 nom
@@ -63,7 +63,7 @@ c  Declaration des variables
       Tmax=20000.
       Nmin=5.
       Nmax=1000.
-      rad=pi/180.                                                         ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
+      rad=pi/180.                                                             ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
 c ouvrir le fichier random.tmp pour rendre le nombre plus aleatoire
       open(unit=1,file='random.tmp',status='unknown')
         read(1,*) inirand
@@ -123,7 +123,7 @@ c fabrication d'un matrice de flag pour identifier ou est le gaz en 3D
 c 0=outside, 1=inside, 2=gaz
       print*,'Creating a 3D map of the nebulae topology...'
       call dblshell(nbx,nby,rcirc,thickc,angz,angx,
-     +distet,object,xe,ye)
+     +distet,fill,xe,ye)
 c
 c On appelle la routine SIINIIratio qui prend les donnees de raies 
 c d'emission pour les transformer en ratio de raies.
@@ -151,10 +151,10 @@ c
       call moysigma(nbx,nby,box,sqrN,ndatN,moyN,sigmN)
 c
 c elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
-c Uniquement les valeurs de 2 dans la matrice object seront denombres
+c Uniquement les valeurs de 2 dans la matrice fill seront denombres
       print*,'Adaptation of the stastistics to the 3D space...'
-      call ensigma(sigmS,nbx,nby,object)
-      call ensigma(sigmN,nbx,nby,object)
+      call ensigma(sigmS,nbx,nby,fill)
+      call ensigma(sigmN,nbx,nby,fill)
 c
 c Lorsqu on ne change pas la resolution, la distribution des donnees est trop smooth derriere
 c chaque pixel ce qui ne permet pas de reproduire les grumeaux (clumps) presents sur l image observee.
@@ -188,6 +188,28 @@ c
           NIIresol(ni,nj)=moyN(i,j)
         enddo
       enddo
+
+      print*,ni,nj,nk
+      ni=0
+      do i=imin,imax,box
+        nj=0
+        ni=ni+1
+        do j=jmin,jmax,box
+          nk=0
+          nj=nj+1
+          do k=kmin,kmax,box
+            nk=nk+1
+            shap(ni,nj,nk)=real(fill(i,j,k))
+            if (fill(i,j,k).ne.0) print*,shap(ni,nj,nk),fill(i,j,k)
+          enddo
+        enddo
+      enddo
+      call WriteIFrIT(ni,nj,nk,shap,'shape.txt')
+
+
+
+
+
 c
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
 c
@@ -240,7 +262,7 @@ c          SIIverif(ii,jj)=0.
           jj=jj+1
           do k=kmin,kmax,box
             kk=kk+1
- 210        if (object(i,j,k).eq.2) then
+ 210        if (fill(i,j,k).eq.2) then
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
 c dans un ensemble de données cree a partir de moy et sigma.     
               if (sigmS(i,j).ne.0.) then        
@@ -289,10 +311,10 @@ c Si le ratio est nul, les temperature et la densite ne sont pas consideres.
               Te(ii,jj,kk)=0.
  200        endif
 c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree au debut du programme.
-            if (object(i,j,k).eq.0) then
+            if (fill(i,j,k).eq.0) then
               Ne(ii,jj,kk)=ene
             endif
-            if (object(i,j,k).eq.1) then
+            if (fill(i,j,k).eq.1) then
               Ne(ii,jj,kk)=ine
             endif       
             
