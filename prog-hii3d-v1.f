@@ -57,10 +57,10 @@ c  Declaration des variables
       character*40 outfil,tdname,tdfile
       character*20 nom
       pi=3.14159265359
-      Tmin=5000.
-      Tmax=20000.
+      Tmin=6000.
+      Tmax=15000.
       Nmin=5.
-      Nmax=1000
+      Nmax=1000.
       convr=pi/180.                                                       ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
 c ouvrir le fichier random.tmp pour rendre le nombre plus aleatoire
       open(unit=1,file='random.tmp',status='unknown')
