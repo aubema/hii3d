@@ -192,7 +192,7 @@ c        print*,'Increasing the standard deviations...'
 
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
 
-	open(unit=1,file='rond.in',status='old')
+ open(unit=1,file='rond.in',status='old')
           read(1,*) xc,yc
         close(unit=1)
         do i=1,401
@@ -406,7 +406,7 @@ c        print*,'Increasing the standard deviations...'
 
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
 
-	open(unit=1,file='rond.in',status='old')
+ open(unit=1,file='rond.in',status='old')
           read(1,*) xc,yc
         close(unit=1)
         do i=1,401

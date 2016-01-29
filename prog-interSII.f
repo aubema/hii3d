@@ -28,9 +28,9 @@ c    Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
        subroutine interSII (dens, rapp, aptmp)
        dimension ratio(19,2)
-       integer ii, n
+       integer n
        real dens, rapp, aptmp, ratio,m,b     
-       ratio(1,1)=1.43	
+       ratio(1,1)=1.43
        ratio(2,1)=1.42
        ratio(3,1)=1.41
        ratio(4,1)=1.39

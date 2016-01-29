@@ -25,7 +25,7 @@ c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
         subroutine ellipse(sigma,nbx,nby,toverr,rcirc)
-	real xc,yc,xr,xy,rcirc,rij,sigma(401,401),toverr
+ real xc,yc,xr,xy,rcirc,rij,sigma(401,401),toverr
 c toverr est l etirement de l'ellipse (a valider grand axe sur petit axe? )
         integer nbx,nby
         open(unit=1,file='rond.in',status='old')

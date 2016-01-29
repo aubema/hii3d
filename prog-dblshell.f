@@ -48,15 +48,14 @@ c      y2s=ye-distet*sin(anglex)
 c 
 c    epaisseur des coquilles = thickc
 c    rhole = rayon interieur de la coquille = rcirc-thickc
-        subroutine dblshell(nbx,nby,rcirc,thickc,anglez,anglex,
+        subroutine dblshell(rcirc,thickc,anglez,anglex,
      +  dist,fill,xe,ye)
-	real xe,ye,z1s,z2s,x1s,x2s,y1s,y2s,dist,anglez,anglex
+        real xe,ye,z1s,z2s,x1s,x2s,y1s,y2s,dist,anglez,anglex
         real rhole2,thickc,r22,r12,rcirc2,pi
         integer fill(401,401,401),i,j,k
 c    fill vaut 0 en-dehors des coquilles
 c    fill vaut 1 a l'interieur
 c    fill vaut 2 dans l epaisseur des coquilles
-        integer nbx,nby
 c La boucle fait en sorte de modifier tous les sigmas existants.
       pi=3.14159265359
       if (xe.gt.ye) then

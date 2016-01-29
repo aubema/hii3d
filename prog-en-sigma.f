@@ -24,7 +24,7 @@ c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
         subroutine ensigma(sigma,nbx,nby,fill)
-	real sigma(401,401),nvoxel
+        real sigma(401,401),nvoxel
         integer fill(401,401,401)
 c toverr est l etirement de l'ellipse (a valider grand axe sur petit axe? )
         integer nbx,nby

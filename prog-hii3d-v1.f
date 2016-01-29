@@ -39,38 +39,36 @@ c  Declaration des variables
       real sigmN(401,401),SIIrat(401,401),NIIrat(401,401)
       real R3D,rcirc,intmnN(401,401),intmnS(401,401),intmxN(401,401)
       real intmxS(401,401)
-      real xe,ye                                                              ! xe,ye = position de l etoile centrale  
-      real xr,yr                                                        
+      real xe,ye                                                              ! xe,ye = position de l etoile centrale                                               
       real NII3d(401,401,401),SII3d(401,401,401)
       real SIImod(401,401),NIImod(401,401),vmin,vmax,xcell0,ycell0
-      real gain,offset,random,Ne(401,401,401),Te(401,401,401)
+      real gain,offset,Ne(401,401,401),Te(401,401,401)
       real Nemod(401,401),ine,ene
       real SIIresol(401,401),NIIresol(401,401)
-      real dens,aptmp,somme,pi,rad,distet
-      real angx,angy,shap(401,401,401)
+      real dens,aptmp,somme,pi,convr,distet
+      real thetax,shap(401,401,401),thetaz
       real thickc,nmod,ze,sig2no
-      real Tmin,Tmax,Nmin,Nmax
+      real Tmin,Tmax,Nmin,Nmax,ra,pixsiz
       integer box,ni,nj,nk,ii,jj,kk
       integer nbx,nby,ndatS(401,401),ndatN(401,401),i,j,k,n
-      integer valmax,pixsiz,imagx,imagy,x,y,z
+      integer valmax,imagx,imagy
       integer imin,imax,jmin,jmax,kmin,kmax
       integer inirand,fill(401,401,401)
-      character*20 namef(30)
-      character*40 outfil,tdname
-      character*12 nom
+      character*40 outfil,tdname,tdfile
+      character*20 nom
       pi=3.14159265359
       Tmin=5000.
       Tmax=20000.
       Nmin=5.
-      Nmax=1000.
-      rad=pi/180.                                                             ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
+      Nmax=1000
+      convr=pi/180.                                                       ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
 c ouvrir le fichier random.tmp pour rendre le nombre plus aleatoire
       open(unit=1,file='random.tmp',status='unknown')
         read(1,*) inirand
       close(unit=1)
       do i=1,inirand
-        x=rand()
-      enddo
+        ra=rand()
+      enddo 
 c ATTENTION. Faut-il encore mettre le +1 a chaque coordonnee ou l'utilisateur devra savoir?
 c On demande les coordonnees de l'etoile centrale (154,161) et les dimensions de l'image
       open(unit=2,file='rond.in',status='unknown')
@@ -80,24 +78,25 @@ c On demande les coordonnees de l'etoile centrale (154,161) et les dimensions de
 c Enter the dimensions of the image
         read(2,*) imagx,imagy
       close(unit=2)
+
 c lecture des parametres variables du modele 3D
 c
-      open(unit=1,file='hii3d.input',status='unknown')
-         read(1,*)
-         read(1,*) angx
-         read(1,*) angz
-         read(1,*) distet
-         read(1,*) rcirc
-         read(1,*) thickc
-         read(1,*) ine
-         read(1,*) ene
-      close(unit=1)
-c angx = inclination angle of the line joining the 2 shells centers 
+      open(unit=11,file='hii3d.input',status='unknown')
+         read(11,*) 
+         read(11,*) thetax
+         read(11,*) thetaz
+         read(11,*) distet
+         read(11,*) rcirc
+         read(11,*) thickc
+         read(11,*) ine
+         read(11,*) ene
+      close(unit=11)
+c thetax = inclination angle of the line joining the 2 shells centers 
 c relative to the horizontal right axis counterclock wise
-c      angx=20.
-c angz = inclination angle of the line joining the 2 shells centers 
+c      thetax=20.
+c thetaz = inclination angle of the line joining the 2 shells centers 
 c relative to the line of sight
-c      angz=50.
+c      thetaz=50.
 c distet = physical distance between the center of each shell
 c      distet=30.    
 c rcirc = shells radius (the 2 shells are identical in size and shape)                                      
@@ -107,8 +106,8 @@ c      thickc=20.
 c minimal signal to noise ratio for the spectral lines images (sig2no)
       sig2no=6.
 c converting to radian
-      angx=angx*rad
-      angz=angz*rad                 
+      thetax=thetax*convr
+      thetaz=thetaz*convr   
 c box est la fenetre glissante utilisee pour calculer les statistiques
 c spatiales de l'objet la box de 7 est suggeree pour avoir une 
 c statistique potable sans trop degrader la resolution
@@ -122,8 +121,7 @@ c
 c fabrication d'un matrice de flag pour identifier ou est le gaz en 3D
 c 0=outside, 1=inside, 2=gaz
       print*,'Creating a 3D map of the nebulae topology...'
-      call dblshell(nbx,nby,rcirc,thickc,angz,angx,
-     +distet,fill,xe,ye)
+      call dblshell(rcirc,thickc,thetaz,thetax,distet,fill,xe,ye)
 c
 c On appelle la routine SIINIIratio qui prend les donnees de raies 
 c d'emission pour les transformer en ratio de raies.
@@ -188,8 +186,6 @@ c
           NIIresol(ni,nj)=moyN(i,j)
         enddo
       enddo
-
-      print*,ni,nj,nk
       ni=0
       do i=imin,imax,box
         nj=0
@@ -200,11 +196,11 @@ c
           do k=kmin,kmax,box
             nk=nk+1
             shap(ni,nj,nk)=real(fill(i,j,k))
-            if (fill(i,j,k).ne.0) print*,shap(ni,nj,nk),fill(i,j,k)
           enddo
         enddo
       enddo
-      call WriteIFrIT(ni,nj,nk,shap,'shape.txt')
+      tdfile='shape.txt'
+      call WriteIFrIT(ni,nj,nk,shap,tdfile)
 
 
 
@@ -217,9 +213,9 @@ c rechercher des bornes superieures et inferieures pour l histogramme +/- 3 sigm
       print*,'Calculation of the 3D NII and SII ratios...'
       do i=imin,imax,box
         do j=jmin,jmax,box
-          intmxN(i,j)=0.
+          intmxN(i,j)=-10000.
           intmnN(i,j)=10000.
-          intmxS(i,j)=0.
+          intmxS(i,j)=-10000.
           intmnS(i,j)=10000.
         enddo
       enddo
@@ -237,14 +233,19 @@ c rechercher des bornes superieures et inferieures pour l histogramme +/- 3 sigm
           if (moyN(i,j)+3.*sigmN(i,j).gt.intmxN(i,j)) then
             intmxN(i,j)=moyN(i,j)+3.*sigmN(i,j)
           endif
-          if (intmnS(i,j).lt.0.) intmnS(i,j)=0.
-          if (intmnN(i,j).lt.0.) intmnN=0.
-          if (intmnN(i,j).lt.0.) print*,'NII inferieur a 0'
 c Selon le graphique d'Osterbrock, le min=0.45 et le max=1.43 pour la raie SII.
+c          if (intmnS(i,j).lt.0.45) print*,'moins que 0.45',intmnS(i,j)
           if (intmnS(i,j).lt.0.45) intmnS(i,j)=0.45
-          if (intmnS(i,j).lt.0.45) print*,'moins que 0.45'
+c          if (intmxS(i,j).gt.1.43) print*,'plus que 1.43',intmxS(i,j)
           if (intmxS(i,j).gt.1.43) intmxS(i,j)=1.43
-          if (intmxS(i,j).gt.1.43) print*,'plus que 1.43'
+          if (intmnN(i,j).lt.35.) then
+c             print*,'moins que 35',intmnN(i,j)
+             intmnN(i,j)=35.
+          endif
+          if (intmxN(i,j).gt.450.) then
+c             print*,'plus que 450',intmxN(i,j)
+             intmxN(i,j)=450.
+          endif
         enddo
       enddo
 
@@ -309,7 +310,7 @@ c Si le ratio est nul, les temperature et la densite ne sont pas consideres.
             else
               Ne(ii,jj,kk)=0.
               Te(ii,jj,kk)=0.
- 200        endif
+            endif
 c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree au debut du programme.
             if (fill(i,j,k).eq.0) then
               Ne(ii,jj,kk)=ene
@@ -330,15 +331,15 @@ c ==============================================
 c Les etapes suivantes servent a produire differentes images pour SII.
 c On produit une image le long de la ligne de visee pour le ratio SII modelise.
 c
-c         print*,'Calculating modeled SII ratio...'
+      print*,'Calculating modeled SII ratio...'
       do i=1,ni
         do j=1,nj
           SIImod(i,j)=0.
-          nmod=0.
+          nmod=1.
           do k=1,nk
             if (SII3d(i,j,k).gt.0.) then
-              nmod=nmod+1.
               SIImod(i,j)=SIImod(i,j)+SII3d(i,j,k)
+              nmod=nmod+1.
             endif
           enddo
           SIImod(i,j)=SIImod(i,j)/nmod
@@ -409,11 +410,11 @@ c         print*,'Calculating modeled NII ratio...'
       do i=1,ni
         do j=1,nj
           NIImod(i,j)=0.
-          nmod=0.
+          nmod=1.
           do k=1,nk
             if (NII3d(i,j,k).gt.0.) then
-              nmod=nmod+1.
               NIImod(i,j)=NIImod(i,j)+NII3d(i,j,k)
+              nmod=nmod+1.
             endif
           enddo
           NIImod(i,j)=NIImod(i,j)/nmod
@@ -492,11 +493,11 @@ c         print*,'Calculating modeled Ne...'
       do i=1,ni
         do j=1,nj
           Nemod(i,j)=0.
-          nmod=0.
+          nmod=1.
           do k=1,nk
             if (Ne(i,j,k).gt.0.) then
-              nmod=nmod+1.
               Nemod(i,j)=Nemod(i,j)+Ne(i,j,k)
+              nmod=nmod+1.
             endif
           enddo
           Nemod(i,j)=Nemod(i,j)/nmod

@@ -29,9 +29,9 @@ c
        real valeur(401,401),xcell0,ycell0,gain,offset
        real valprint(401,401)
        integer i,j,nbx,nby,valmax
-       character*12 nom
+       character*20 nom
        character*40 outfil
-c       print*,'Ecriture du fichier de ',nom,': ',outfil
+       print*,'Ecriture du fichier de ',nom,': ',outfil
        open(unit=1,file=outfil,status='unknown')
        write(1,1000) ! Tag P2).
        write(1,1001) xcell0

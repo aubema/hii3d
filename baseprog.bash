@@ -3,10 +3,9 @@
 # hii3d compiling script
 #
 #cd $HOME/svn/hii3d
-# echo "gfortran  hii3d.f TNelines.f extrant2d.f  intersii.f TemperatureNII.f ellipse.f squaredata.f moyecart.f gaussienne.f histo.f writeIFrIT.f interp.f -o hii3d"
-# gfortran  hii3d.f TNelines.f extrant2d.f  intersii.f TemperatureNII.f ellipse.f squaredata.f moyecart.f gaussienne.f histo.f writeIFrIT.f interp.f -o hii3d
-gfortran  prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
-# gfortran  hii3d.f TNelines.f extrant2d.f  intersii.f TemperatureNII.f ellipse.f squaredata.f moyecart.f gaussienne.f histo.f writeIFrIT.f interp.f -o hii3d
+gfortran -mcmodel=medium -Wall -fcheck=all -g -fbacktrace -ffpe-trap=zero,overflow,underflow prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
+
+# gfortran -mcmodel=large prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 #Compiling done
 list=`ls -1 *.fit` #create the list of all images available in the directory. #all the files must be in the local directory
 n=0
@@ -36,13 +35,13 @@ let ye=161         # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
-angx="135"
-angz="30"
-distet="20"
-rcirc="80"
-thickc="15"
-ine="5"
-ene="0"
+angx="135."
+angz="30."
+distet="20."
+rcirc="80."
+thickc="15."
+ine="5."
+ene="0."
 #
 #
 angx=`echo $angx`

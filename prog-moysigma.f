@@ -40,9 +40,9 @@ c On calcul la moyenne en chaque point.
         do i=1+taille/2,nbx-taille/2-1
            do j=1+taille/2,nby-taille/2-1
              moy(i,j) = 0.
-	     t = 0.
-	     do k=1,kmax
-	     t = t + square(i,j,k)
+      t = 0.
+      do k=1,kmax
+      t = t + square(i,j,k)
              enddo
                if (ndata(i,j).ne.0) then
                  moy(i,j) = t/real(ndata(i,j))
@@ -55,9 +55,9 @@ c On calcul l'ecart-type en chaque point.
            do j=1+taille/2,nby-taille/2-1
             sigma(i,j)=0.
             if (ndata(i,j).ne.0) then  
-	       e = 0.
-	       do k=1,kmax
-	          if (square(i,j,k).ne.0.) then
+        e = 0.
+        do k=1,kmax
+           if (square(i,j,k).ne.0.) then
                      e=e+(square(i,j,k)-moy(i,j))**2.
                   endif
                enddo

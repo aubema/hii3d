@@ -34,7 +34,7 @@ c
         integer NII6584,NII5755,NIIBx,NIIBy
         character*20 namef(30)
         character*40 outfil
-        character*12 nom
+        character*20 nom
 c On prepare les donnees d'emission de raies.
 
 c On definit le rayon d'interpolation.
@@ -45,7 +45,7 @@ c On definit le rayon d'interpolation.
               read(1,*) namef(n)
 c lecture de la liste des images de signal et bruit (fichiers .fits)
            enddo
-	close(unit=1)
+        close(unit=1)
         do n=1,nfiles
           open(unit=2,file=namef(n),status='unknown')
             length=ncols*nlines+ncols+nlines
@@ -242,4 +242,4 @@ c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
      + gain,offset,nbx,nby,valmax)
 
         return
-	end 
+        end 

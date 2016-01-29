@@ -26,9 +26,9 @@ c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice 
 c
         subroutine gaussienne(moyl,sigmal,R3D,xmin,xmax)
         real moyl,sigmal,alea(2000000)
-        real e,pi,Fmax,xmin,xmax,Inte,y,R3D,F,r,phi
+        real e,pi,Fmax,xmin,xmax,Inte,y,R3D,F
         real random
-        integer i,j,n,m,k,ii,jj
+        integer n,m
         e=2.71828182846
         pi=3.14159265359
         n=0
@@ -40,13 +40,13 @@ c
            F=1./(sigmal*sqrt(2.*pi))*e**(-1.*(y-moyl)
      +     **2./(2.*sigmal**2.))
            do m=1,nint(F/Fmax)
-              alea(n)=y
               n=n+1
+              alea(n)=y
            enddo
         enddo
 c On tire aleatoirement dans la gaussienne, et la valeur R3D sera ensuite
 c ajoutee a la matrice 3D dans hii3d.
         random=rand()
-        R3D=alea(nint(random*real(n)))
+        R3D=alea(nint(random*real(n))+1)
         return
         end
