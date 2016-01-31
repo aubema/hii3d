@@ -57,10 +57,11 @@ c  Declaration des variables
       character*40 outfil,tdname,tdfile
       character*20 nom
       pi=3.14159265359
-      Tmin=6000.
-      Tmax=15000.
-      Nmin=5.
-      Nmax=1000.
+      Tmin=6900.                                                          ! Valeurs min et max selon table 3 Philips 1998 Astron. Astrophys 340, 527-542
+      Tmax=21500.
+      Nmin=20.                                                            ! 20 remplace la valeur de 44.66 de Philips 1998 pour coincider avec Lagrois et al 2015
+c selon Lagrois Ne varie de 20 a 230 cm-1 dans M27 et Te varie de 8400 a 13000K
+      Nmax=30200.
       convr=pi/180.                                                       ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
 c ouvrir le fichier random.tmp pour rendre le nombre plus aleatoire
       open(unit=1,file='random.tmp',status='unknown')
