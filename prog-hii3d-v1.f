@@ -48,15 +48,17 @@ c  Declaration des variables
       real dens,aptmp,somme,pi,convr,distet
       real thetax,shap(401,401,401),thetaz
       real thickc,nmod,ze,sig2no
-      real Tmin,Tmax,Nmin,Nmax,ra,pixsiz
+      real Tmin,Tmax,Nmin,Nmax,ra,pixsiz,Tstellar
       integer box,ni,nj,nk,ii,jj,kk
       integer nbx,nby,ndatS(401,401),ndatN(401,401),i,j,k,n
       integer valmax,imagx,imagy
       integer imin,imax,jmin,jmax,kmin,kmax
       integer inirand,fill(401,401,401)
+      integer ip,jp,kp,xep,yep,zep
       character*40 outfil,tdname,tdfile
       character*20 nom
       pi=3.14159265359
+      Tstellar=80000.                                                     ! Set the Ionizing star temperature for Mocassin
       Tmin=6900.                                                          ! Valeurs min et max selon table 3 Philips 1998 Astron. Astrophys 340, 527-542
       Tmax=21500.
       Nmin=20.                                                            ! 20 remplace la valeur de 44.66 de Philips 1998 pour coincider avec Lagrois et al 2015
@@ -113,7 +115,7 @@ c box est la fenetre glissante utilisee pour calculer les statistiques
 c spatiales de l'objet la box de 7 est suggeree pour avoir une 
 c statistique potable sans trop degrader la resolution
 c La variable box a une valeur maximale de 15.
-      box=7
+      box=5
 c ine est la densite electronique a l'interieur de la cavite
 c      ine=30.
 c ene est la densite electronique a l'exterieur de la nebuleuse (r>rcirc)
@@ -191,21 +193,20 @@ c
       do i=imin,imax,box
         nj=0
         ni=ni+1
+        if (i.eq.int(xe)) xep=ni
         do j=jmin,jmax,box
           nk=0
           nj=nj+1
+          if (j.eq.int(ye)) yep=nj
           do k=kmin,kmax,box
             nk=nk+1
+            if (k.eq.int(ze)) zep=nk
             shap(ni,nj,nk)=real(fill(i,j,k))
           enddo
         enddo
       enddo
       tdfile='shape.txt'
       call WriteIFrIT(ni,nj,nk,shap,tdfile)
-
-
-
-
 
 c
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
@@ -488,6 +489,52 @@ c utilisables par le programme IFrIT.
       tdname='Te3D.txt'
       print*,'Writing 3D Te matrix...'
       call WriteIFrIT(ni,nj,nk,Te,tdname)
+c
+c Save the 3D Ne for Mocassin
+ci=imin,imax,box
+      open(unit=6,file='densities.dat',status='unknown')
+        do ip=1,71
+           i=ip+xep-36
+           do jp=1,71
+              j=jp+yep-36
+              do kp=1,71
+                 k=kp+zep-36
+                 if ((k.ge.1).and.(j.ge.1).and.(i.ge.1)) then
+                    write(6,*) ip,jp,kp,i,j,k,Ne(i,j,k)
+                 else
+                    write(6,*) ip,jp,kp,i,j,k,'0.'
+                 endif
+              enddo
+           enddo
+         enddo
+      close(unit=6)
+      open(unit=6,file='input.in',status='unknown')
+          write(6,*) 'autoPackets 0.20 2. 10000000'
+          write(6,*) 'TStellar ', Tstellar
+          write(6,*) 'contShape  blackbody'
+          write(6,*) 'output'
+          write(6,*) 'densityFile ''input/densities.dat'''
+          write(6,*) 'nebComposition "input/abun.in"'
+          write(6,*) 'TeStart 10000.'
+          write(6,*) 'maxIterateMC  20 95.'
+          write(6,*) 'nPhotons 1000000'
+          write(6,*) 'nx 71'
+          write(6,*) 'ny 71'
+          write(6,*) 'nz 71'
+          write(6,*) 'nstages 7'
+          write(6,*) 'nbins 600'
+          write(6,*) 'LStar 1.0'
+          write(6,*) 'nuMax 15.'
+          write(6,*) 'nuMin 1.001e-5'
+          write(6,*) 'Rin 1.0e15'
+          write(6,*) 'Rout 1.0E+18'
+          write(6,*) 'convLimit 0.05'
+          write(6,*) 'writeGrid 10.'
+      close(unit=6)
+        
+       
+
+
 c c Les etapes suivantes servent a produire differentes images pour Ne.
 c On produit une image le long de la ligne de visee pour la densite Ne modelisee.
 c         print*,'Calculating modeled Ne...'

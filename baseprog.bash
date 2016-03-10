@@ -35,12 +35,12 @@ let ye=161         # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
-angx="135."
-angz="30."
-distet="20."
-rcirc="80."
-thickc="15."
-ine="5."
+angx="90."
+angz="90."
+distet="30."
+rcirc="10."
+thickc="5."
+ine="0."
 ene="0."
 #
 #
