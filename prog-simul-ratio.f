@@ -5,22 +5,21 @@ c read mocassion file
 ci=imin,imax,box
 c spectral lines per column = 6583 5755 6716 6731
       integer soonze,i,j,k,valmax
-      real flux2d(71,71,4),flux(71,71,71,4),SII(71,71),NII(71,71)
-      real vmin,vmax,xcell0,ycell0,offset,pixsiz,gain
+      real flux2d(71,71,4),flux(71,71,71,4),SII(401,401),NII(401,401)
+      real vmin,vmax,xcell0,ycell0,offset,pixsiz,gain,bidon
       character*20 nom
       character*40 outfil
       soonze=71
-      open(unit=6,file='plot.out',status='old')
-        do i=1,71
-           do j=1,71
-              do k=1,71
-       print*,i,j,k
-                 read(6,*) flux(i,j,k,1),flux(i,j,k,2),
+      open(unit=1,file='plot.out',status='old')
+        do i=1,soonze
+           do j=1,soonze
+              do k=1,soonze
+                 read(1,*) bidon,flux(i,j,k,1),flux(i,j,k,2),
      +           flux(i,j,k,3),flux(i,j,k,4)   
               enddo
            enddo
          enddo
-      close(unit=6)
+      close(unit=1)
 c integrate the fluxes along the line of sight
       do i=1,71
          do j=1,71
@@ -37,8 +36,8 @@ c integrate the fluxes along the line of sight
          enddo
       enddo
 c compute the NII and SII ratios
-        do i=1,71
-         do j=1,71 
+        do i=1,soonze
+         do j=1,soonze
             if (flux2d(i,j,4).gt.0.) then
               SII(i,j)=flux2d(i,j,3)/flux2d(i,j,4)
             else
