@@ -41,10 +41,16 @@ c  Declaration des variables
       real intmxS(401,401)
       real xe,ye                                                              ! xe,ye = position de l etoile centrale                                               
       real NII3d(401,401,401),SII3d(401,401,401)
-      real SIImod(401,401),NIImod(401,401),vmin,vmax,xcell0,ycell0
+      real SIImod(401,401),NIImod(401,401)
+      real SIImod2(401,401),NIImod2(401,401)
+
+
+      real vmin,vmax,xcell0,ycell0
       real gain,offset,Ne(401,401,401),Te(401,401,401)
       real Nemod(401,401),ine,ene
       real SIIresol(401,401),NIIresol(401,401)
+      real SIIresol2(401,401),NIIresol2(401,401)
+
       real dens,aptmp,somme,pi,convr,distet
       real thetax,shap(401,401,401),thetaz
       real thickc,nmod,ze,sig2no,tpix
@@ -54,10 +60,11 @@ c  Declaration des variables
       integer valmax,imagx,imagy
       integer imin,imax,jmin,jmax,kmin,kmax
       integer inirand,fill(401,401,401)
-      integer ip,jp,kp,xep,yep,zep
+      integer ip,jp,kp,xep,yep,zep,soonze
       character*40 outfil,tdname,tdfile
       character*20 nom
       pi=3.14159265359
+      soonze=71
       zero=0.
       Tstellar=80000.                                                     ! Set the Ionizing star temperature for Mocassin
       Tmin=6900.                                                          ! Valeurs min et max selon table 3 Philips 1998 Astron. Astrophys 340, 527-542
@@ -211,7 +218,6 @@ c
       enddo
       tdfile='shape.txt'
       call WriteIFrIT(ni,nj,nk,shap,tdfile)
-
 c
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
 c
@@ -374,9 +380,20 @@ c
       nom="SIIratio"
       pixsiz=1.
       valmax=65535 
+c center the ionizing star 
+
+        do ip=1,71
+           i=ip+xep-36
+           do jp=1,71
+              j=jp+yep-36
+                 if ((j.ge.1).and.(i.ge.1)) then
+                   SIImod2(ip,jp)=SIImod(i,j) 
+                 endif
+           enddo
+         enddo
 c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
-      call extrant2d (outfil,SIImod,nom,xcell0,ycell0,pixsiz,
-     +gain,offset,ni,nj,valmax)
+      call extrant2d (outfil,SIImod2,nom,xcell0,ycell0,pixsiz,
+     +gain,offset,soonze,soonze,valmax)
 c On imprime une image du ratio SII observe.
       vmin=1000000000.
       vmax=0.           
@@ -398,9 +415,19 @@ c On imprime une image du ratio SII observe.
       nom="SIIratio"
       pixsiz=1.
       valmax=65535
+c center the ionizing star 
+        do ip=1,71
+           i=ip+xep-36
+           do jp=1,71
+              j=jp+yep-36
+                 if ((j.ge.1).and.(i.ge.1)) then
+                   SIIresol2(ip,jp)=SIIresol(i,j) 
+                 endif
+           enddo
+         enddo
 c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
-      call extrant2d (outfil,SIIresol,nom,xcell0,ycell0,pixsiz,
-     +gain,offset,ni,nj,valmax)          
+      call extrant2d (outfil,SIIresol2,nom,xcell0,ycell0,pixsiz,
+     +gain,offset,soonze,soonze,valmax)          
 c On ecrit la matrice SII3d dans un fichier.
       tdname='SIIratio3D.txt'
 c         print*,'Writing 3D matrix...'
@@ -447,9 +474,19 @@ c On imprime une image du ratio NII modelise.
       nom="NIIratio"
       pixsiz=1.
       valmax=65535
+c center the ionizing star 
+        do ip=1,71
+           i=ip+xep-36
+           do jp=1,71
+              j=jp+yep-36
+                 if ((j.ge.1).and.(i.ge.1)) then
+                   NIImod2(ip,jp)=NIImod(i,j) 
+                 endif
+           enddo
+         enddo
 c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
-      call extrant2d (outfil,NIImod,nom,xcell0,ycell0,pixsiz,
-     +gain,offset,ni,nj,valmax)
+      call extrant2d (outfil,NIImod2,nom,xcell0,ycell0,pixsiz,
+     +gain,offset,soonze,soonze,valmax)
 c On imprime une image du ratio NII observe.
       vmin=1000000000.
       vmax=0.           
@@ -471,9 +508,19 @@ c On imprime une image du ratio NII observe.
       nom="NIIratio"
       pixsiz=1.
       valmax=65535
+c center the ionizing star 
+        do ip=1,71
+           i=ip+xep-36
+           do jp=1,71
+              j=jp+yep-36
+                 if ((j.ge.1).and.(i.ge.1)) then
+                   NIIresol2(ip,jp)=NIIresol(i,j) 
+                 endif
+           enddo
+         enddo
 c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
-      call extrant2d (outfil,NIIresol,nom,xcell0,ycell0,pixsiz,
-     +gain,offset,ni,nj,valmax)          
+      call extrant2d (outfil,NIIresol2,nom,xcell0,ycell0,pixsiz,
+     +gain,offset,soonze,soonze,valmax)          
 c On ecrit la matrice SII3d dans un fichier.
       tdname='NIIratio3D.txt'
 c         print*,'Writing 3D matrix...'

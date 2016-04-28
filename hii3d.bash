@@ -4,6 +4,7 @@
 #
 #cd $HOME/svn/hii3d
 gfortran -mcmodel=medium -Wall -fcheck=all -g -fbacktrace -ffpe-trap=zero,overflow,underflow prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
+gfortran prog-simul-ratio.f prog-extrant2d.f -o prog-simul-ratio
 
 # gfortran -mcmodel=large prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 #Compiling done
@@ -49,8 +50,8 @@ angx="135."
 #rcirc="40 50 60 70 80"
 angz="10"
 distet="40"
-rcirc="30"
-thickcstep="10"
+rcirc="80"
+thickcstep="80"
 ine="0."
 ene="0."
 tpix=6.E16   # taille d'un pixel en UNITES?
@@ -78,6 +79,7 @@ do
       for k in $distet
       do 
          for l in $rcirc
+# m stands for thickness index
          do m=0
             while [ $m -lt $l ]
             do let m=m+thickcstep
@@ -143,7 +145,7 @@ mv -f abun.in Transfer_to_mp2/input
 echo "mono" > Transfer_to_mp2/input/plot.in
 echo "line 1         6583.   6583."  >> Transfer_to_mp2/input/plot.in
 echo "line 2         5755.   5755."  >> Transfer_to_mp2/input/plot.in
-echo "line 3         6716.   6731."  >> Transfer_to_mp2/input/plot.in
+echo "line 3         6716.   6716."  >> Transfer_to_mp2/input/plot.in
 echo "line 4         6731.   6731."  >> Transfer_to_mp2/input/plot.in
 
 
