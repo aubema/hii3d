@@ -7,6 +7,14 @@ gfortran -mcmodel=medium -Wall -fcheck=all -g -fbacktrace -ffpe-trap=zero,overfl
 
 # gfortran -mcmodel=large prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 #Compiling done
+rm -f Ne3D*.txt
+rm -f mocassin_cases_list
+rm -fr Transfer_to_mp2
+mkdir Transfer_to_mp2
+# creer le repertoire de cas pour mocassin
+rm -fr Transfer_to_mp2/mocassin_cases
+mkdir Transfer_to_mp2/mocassin_cases
+mkdir Transfer_to_mp2/input
 list=`ls -1 *.fit` #create the list of all images available in the directory. #all the files must be in the local directory
 n=0
 for i in $list
@@ -35,13 +43,17 @@ let ye=161         # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
-angx="90."
-angz="90."
-distet="30."
-rcirc="10."
-thickc="5."
+angx="135."
+#angz="1 10 20 30 40 50 60 70 80"
+#distet="10 20 30 40 50 60 70 80"
+#rcirc="40 50 60 70 80"
+angz="10"
+distet="40"
+rcirc="30"
+thickcstep="10"
 ine="0."
 ene="0."
+tpix=6.E16   # taille d'un pixel en UNITES?
 #
 #
 angx=`echo $angx`
@@ -55,16 +67,24 @@ echo $xe $ye > rond.in
 echo $rcirc >> rond.in  # rayon externe des coquilles
 # killall display
 #
+
 # debut des boucles sur tous les parametres
 nn=0
+
 for i in $angx
-   do for j in $angz 
-      do for k in $distet
-         do for l in $rcirc
-            do for m in $thickc
-               do for n in $ine
-                  do for o in $ene
-                     do #helping the random number to be random
+do 
+   for j in $angz 
+   do 
+      for k in $distet
+      do 
+         for l in $rcirc
+         do m=0
+            while [ $m -lt $l ]
+            do let m=m+thickcstep
+               for n in $ine
+               do 
+                  for o in $ene
+                  do #helping the random number to be random
                         sec=`date '+%S'| sed 's/^0*//'`
                         min=`date '+%M'| sed 's/^0*//'`
                         day=`date '+%d'| sed 's/^0*//'`
@@ -78,11 +98,17 @@ for i in $angx
                         echo $m >>  hii3d.input
                         echo $n >> hii3d.input
                         echo $o >> hii3d.input
+                        echo $tpix >> hii3d.input
                         echo "Running hii3d"
                         ./prog-hii3d
                         file="Ne3D_angx-"$i"_angz-"$j"_distet-"$k"_rcric-"$l"_thickc-"$m"_ine-"$n"_ene-"$o".txt"
+                        mocfile="Ne3D_angx-"$i"_angz-"$j"_distet-"$k"_rcric-"$l"_thickc-"$m"_ine-"$n"_ene-"$o".dat"
                         echo $file
                         mv Ne3D.txt $file
+                        cat densities.dat | sed 's/  / /g' | sed 's/  / /g' > densities.tmp
+                        mv -f densities.tmp densities.dat 
+                        mv -f densities.dat Transfer_to_mp2/mocassin_cases/$mocfile
+                        echo $mocfile >> Transfer_to_mp2/mocassin_cases_list
                      done
                   done
                done
@@ -90,6 +116,36 @@ for i in $angx
          done
       done
    done
+   cat input.in | sed s'/densities.dat"/~~density~~"/g' | sed s'/input/$HOME\/mocassin_run/g'> input.tmp
+   mv input.tmp Transfer_to_mp2/input/input.in
+# creation of bqsubmit.dat files
+#
+# Nom du paquet
+echo "batchName = scanning_mocassin_solutions" > Transfer_to_mp2/bqsubmit.dat
+# Fichier de soumission des tâches
+echo "templateFiles = input.in" >> Transfer_to_mp2/bqsubmit.dat
+# Lien pour accéder aux fichiers d'entrée
+#echo "linkFiles = mocassin_cases" >> Transfer_to_mp2/bqsubmit.dat
+# Commande à exécuter sur le nœud de calcul
+echo "command = /home/aube_group/hii3d/openmpi/bin/mpirun -np 20 mocassin" >> Transfer_to_mp2/bqsubmit.dat
+# Combien de tâches par nœud en même temps
+# runJobsPerNode = 2
+# Combien de tâches seront soumises sur un même nœud
+# accJobsPerNode = 4
+# Ressources requises par chaque groupe de quatre tâches.
+echo "submitOptions = -q qwork@mp2 -l walltime=1:00:00,nodes=20" >> Transfer_to_mp2/bqsubmit.dat
+# Liste des paramètres pour chaque tâche
+echo "param1 = density = load mocassin_cases_list" >> Transfer_to_mp2/bqsubmit.dat
+# Combien de groupe de quatre tâches peuvent être exécutés en même temps.
+# concurrentJobs = 100
+mv -f abun.in Transfer_to_mp2/input
+# create the plot.in containing the spectral lines to simulate
+echo "mono" > Transfer_to_mp2/input/plot.in
+echo "line 1         6583.   6583."  >> Transfer_to_mp2/input/plot.in
+echo "line 2         5755.   5755."  >> Transfer_to_mp2/input/plot.in
+echo "line 3         6716.   6731."  >> Transfer_to_mp2/input/plot.in
+echo "line 4         6731.   6731."  >> Transfer_to_mp2/input/plot.in
+
 
 
 
