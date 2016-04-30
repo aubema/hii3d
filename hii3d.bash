@@ -19,10 +19,10 @@ rm -f $mopath/mocassinPlot.bash
 #
 #
 rm -f Ne3D*.txt
-rm -fr Transfer_to_mp2
-mkdir Transfer_to_mp2
+rm -fr $mopath/Transfer_to_mp2
+mkdir $mopath/Transfer_to_mp2
 # creer le repertoire de cas pour mocassin
-mkdir Transfer_to_mp2/mocassin_cases
+mkdir $mopath/Transfer_to_mp2/mocassin_cases
 list=`ls -1 *.fit` #create the list of all images available in the directory. #all the files must be in the local directory
 n=0
 for i in $list
@@ -112,43 +112,42 @@ do
                         ./prog-hii3d
                         path="ax-"$i"_az-"$j"_de-"$k"_rc-"$l"_tc-"$m"_in-"$n"_en-"$o
                         echo $path
-                        mkdir Transfer_to_mp2/mocassin_cases/$path
+                        mkdir $mopath"/Transfer_to_mp2/mocassin_cases/"$path
                         cat densities.dat | sed 's/  / /g' | sed 's/  / /g' > densities.tmp
-                        mkdir "Transfer_to_mp2/mocassin_cases/"$path"/input"
-                        mkdir "Transfer_to_mp2/mocassin_cases/"$path"/output"
+                        mkdir $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input"
+                        mkdir $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/output"
                         mv -f densities.tmp densities.dat 
-                        cp -f densities.dat "Transfer_to_mp2/mocassin_cases/"$path"/input"
-                        cp -f SIIresol.pgm "Transfer_to_mp2/mocassin_cases/"$path
-                        cp -f NIIresol.pgm "Transfer_to_mp2/mocassin_cases/"$path
-                        cp -f Ne3D.txt "Transfer_to_mp2/mocassin_cases/"$path
-                        cp -f Te3D.txt "Transfer_to_mp2/mocassin_cases/"$path
-                        cp -f shape.txt "Transfer_to_mp2/mocassin_cases/"$path
-                        cp -f SIIratio3D.txt "Transfer_to_mp2/mocassin_cases/"$path
-                        cp -f NIIratio3D.txt "Transfer_to_mp2/mocassin_cases/"$path
-                        cp -f input.in "Transfer_to_mp2/mocassin_cases/"$path"/input"
-                        cp -f abun.in "Transfer_to_mp2/mocassin_cases/"$path"/input"
+                        cp -f densities.dat $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input"
+                        cp -f SIIresol.pgm $mopath/"Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f NIIresol.pgm $mopath/"Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f Ne3D.txt $mopath/"Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f Te3D.txt $mopath/"Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f shape.txt $mopath/"Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f SIIratio3D.txt $mopath/"Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f NIIratio3D.txt $mopath/"Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f input.in $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input"
+                        cp -f abun.in $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input"
 # create the plot.in containing the spectral lines to simulate
                         echo "mono" > "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
-                        echo "line 1         6583.   6583."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
-                        echo "line 2         5755.   5755."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
-                        echo "line 3         6716.   6716."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
-                        echo "line 4         6731.   6731."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 1         6583.   6583."  >> $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 2         5755.   5755."  >> $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 3         6716.   6716."  >> $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 4         6731.   6731."  >> $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
 #
 # creation of the execute script
-                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/mocassin.bash
-                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=20 mpirun -np 20 mocassin" >>  Transfer_to_mp2/mocassin.bash
-                        echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
-                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
-                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> Transfer_to_mp2/mocassinPlot.bash
-                        echo "sleep 0.05"  >> Transfer_to_mp2/mocassinPlot.bash
-                        echo "cd "$path >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s "$HOME"/hg/hii3d/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s "$HOME"/hg/hii3d/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "cp -f output/plot.out ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
+                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath/Transfer_to_mp2/mocassin.bash
+                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=20 mpirun -np 20 mocassin" >>  $mopath/Transfer_to_mp2/mocassin.bash
+                        echo "sleep 0.05"  >>  $mopath/Transfer_to_mp2/mocassin.bash
+                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  $mopath/Transfer_to_mp2/mocassinPlot.bash
+                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> $mopath/Transfer_to_mp2/mocassinPlot.bash
+                        echo "sleep 0.05"  >> $mopath/Transfer_to_mp2/mocassinPlot.bash
+                        echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath/Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s "$HOME"/hg/hii3d/prog-simul-ratio ." >> $mopath/Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s "$HOME"/hg/hii3d/prog-rms ." >> $mopath/Transfer_to_mp2/leastSquare.bash
+                        echo "cp -f output/plot.out ." >> $mopath/Transfer_to_mp2/leastSquare.bash
+                        echo "./prog-simul-ratio" >> $mopath/Transfer_to_mp2/leastSquare.bash
                         echo $path > rms.tmp
-                        echo "./prog-rms < rms.tmp" >> Transfer_to_mp2/leastSquare.bash
-                        echo "cd .." >> Transfer_to_mp2/leastSquare.bash
+                        echo "./prog-rms < rms.tmp" >> $mopath/Transfer_to_mp2/leastSquare.bash
                      done
                   done
                done
