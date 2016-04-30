@@ -144,6 +144,10 @@ do
                         echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> $mopath"/mocassinPlot.bash"
                         echo "sleep 0.05"  >> $mopath"/mocassinPlot.bash"
                         echo "cd "$path >> $mopath"/leastSquare.bash"
+                        echo "ln -s "$HOME"/hg/hii3d/prog-simul-ratio ."
+                        echo "ln -s "$HOME"/hg/hii3d/prog-rms ."
+                        echo "cp -f output/plot.out ." >> $mopath"/leastSquare.bash"
+                        echo "./prog-simul-ratio" >> $mopath"/leastSquare.bash"
                         echo $path > rms.tmp
                         echo "./prog-rms < rms.tmp" >> $mopath"/leastSquare.bash"
                      done
