@@ -19,11 +19,9 @@ rm -f $mopath/mocassinPlot.bash
 #
 #
 rm -f Ne3D*.txt
-rm -f mocassin_cases_list
 rm -fr Transfer_to_mp2
 mkdir Transfer_to_mp2
 # creer le repertoire de cas pour mocassin
-rm -fr Transfer_to_mp2/mocassin_cases
 mkdir Transfer_to_mp2/mocassin_cases
 list=`ls -1 *.fit` #create the list of all images available in the directory. #all the files must be in the local directory
 n=0
@@ -60,7 +58,7 @@ angx="135."
 angz="10"
 distet="40"
 rcirc="80"
-thickcstep="80"
+thickcstep="20"
 ine="0."
 ene="0."
 tpix=6.E16   # taille d'un pixel en UNITES?
