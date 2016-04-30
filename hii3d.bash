@@ -148,6 +148,7 @@ do
                         echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
                         echo $path > rms.tmp
                         echo "./prog-rms < rms.tmp" >> Transfer_to_mp2/leastSquare.bash
+                        echo "cd .." >> Transfer_to_mp2/leastSquare.bash
                      done
                   done
                done
