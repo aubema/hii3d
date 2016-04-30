@@ -26,7 +26,7 @@ c
            enddo
          enddo
          rms=rmsNii+rmsSii
-         rms
+
          open(unit=1,file='cases-comparizon.txt',status='unknown',
      +   position="append")
              write(1,*) name, rms

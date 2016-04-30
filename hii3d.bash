@@ -9,6 +9,15 @@ gfortran prog-rms.f prog-intrants2d.f -o prog-rms
 
 # gfortran -mcmodel=large prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 #Compiling done
+# set mocassin path on mammouth
+mopath=$HOME/hii3d
+echo $mopath
+rm -f $mopath/leastSquare.bash
+rm -f $mopath/mocassin.bash
+rm -f $mopath/mocassinPlot.bash
+#
+#
+#
 rm -f Ne3D*.txt
 rm -f mocassin_cases_list
 rm -fr Transfer_to_mp2
@@ -16,7 +25,6 @@ mkdir Transfer_to_mp2
 # creer le repertoire de cas pour mocassin
 rm -fr Transfer_to_mp2/mocassin_cases
 mkdir Transfer_to_mp2/mocassin_cases
-mkdir Transfer_to_mp2/input
 list=`ls -1 *.fit` #create the list of all images available in the directory. #all the files must be in the local directory
 n=0
 for i in $list
@@ -104,14 +112,40 @@ do
                         echo $tpix >> hii3d.input
                         echo "Running hii3d"
                         ./prog-hii3d
-                        file="Ne3D_angx-"$i"_angz-"$j"_distet-"$k"_rcric-"$l"_thickc-"$m"_ine-"$n"_ene-"$o".txt"
-                        mocfile="Ne3D_angx-"$i"_angz-"$j"_distet-"$k"_rcric-"$l"_thickc-"$m"_ine-"$n"_ene-"$o".dat"
-                        echo $file
-                        mv Ne3D.txt $file
+                        path="ax-"$i"_az-"$j"_de-"$k"_rc-"$l"_tc-"$m"_in-"$n"_en-"$o
+                        echo $path
+                        mkdir Transfer_to_mp2/mocassin_cases/$path
                         cat densities.dat | sed 's/  / /g' | sed 's/  / /g' > densities.tmp
+                        mkdir "Transfer_to_mp2/mocassin_cases/"$path"/input"
+                        mkdir "Transfer_to_mp2/mocassin_cases/"$path"/output"
                         mv -f densities.tmp densities.dat 
-                        mv -f densities.dat Transfer_to_mp2/mocassin_cases/$mocfile
-                        echo $mocfile >> Transfer_to_mp2/mocassin_cases_list
+                        cp -f densities.dat "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f SIIresol.pgm "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f NIIresol.pgm "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f Ne3D.txt "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f Te3D.txt "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f shape.txt "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f SIIratio3D.txt "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f NIIratio3D.txt "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f input.in "Transfer_to_mp2/mocassin_cases/"$path"/input"
+                        cp -f abun.in "Transfer_to_mp2/mocassin_cases/"$path"/input"
+# create the plot.in containing the spectral lines to simulate
+                        echo "mono" > "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 1         6583.   6583."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 2         5755.   5755."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 3         6716.   6716."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+                        echo "line 4         6731.   6731."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
+#
+# creation of the execute script
+                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath"/mocassin.bash"
+                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=20 mpirun -np 20 mocassin" >> $mopath"/mocassin.bash"
+                        echo "sleep 0.05"  >> $mopath"/mocassin.bash"
+                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath"/mocassinPlot.bash"
+                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> $mopath"/mocassinPlot.bash"
+                        echo "sleep 0.05"  >> $mopath"/mocassinPlot.bash"
+                        echo "cd "$path >> $mopath"/leastSquare.bash"
+                        echo $path > rms.tmp
+                        echo "./prog-rms < rms.tmp" >> $mopath"/leastSquare.bash"
                      done
                   done
                done
@@ -119,35 +153,7 @@ do
          done
       done
    done
-   cat input.in | sed s'/densities.dat"/~~density~~"/g' | sed s'/input/$HOME\/mocassin_run/g'> input.tmp
-   mv input.tmp Transfer_to_mp2/input/input.in
-# creation of bqsubmit.dat files
-#
-# Nom du paquet
-echo "batchName = scanning_mocassin_solutions" > Transfer_to_mp2/bqsubmit.dat
-# Fichier de soumission des tâches
-echo "templateFiles = input.in" >> Transfer_to_mp2/bqsubmit.dat
-# Lien pour accéder aux fichiers d'entrée
-#echo "linkFiles = mocassin_cases" >> Transfer_to_mp2/bqsubmit.dat
-# Commande à exécuter sur le nœud de calcul
-echo "command = /home/aube_group/hii3d/openmpi/bin/mpirun -np 20 mocassin" >> Transfer_to_mp2/bqsubmit.dat
-# Combien de tâches par nœud en même temps
-# runJobsPerNode = 2
-# Combien de tâches seront soumises sur un même nœud
-# accJobsPerNode = 4
-# Ressources requises par chaque groupe de quatre tâches.
-echo "submitOptions = -q qwork@mp2 -l walltime=1:00:00,nodes=20" >> Transfer_to_mp2/bqsubmit.dat
-# Liste des paramètres pour chaque tâche
-echo "param1 = density = load mocassin_cases_list" >> Transfer_to_mp2/bqsubmit.dat
-# Combien de groupe de quatre tâches peuvent être exécutés en même temps.
-# concurrentJobs = 100
-mv -f abun.in Transfer_to_mp2/input
-# create the plot.in containing the spectral lines to simulate
-echo "mono" > Transfer_to_mp2/input/plot.in
-echo "line 1         6583.   6583."  >> Transfer_to_mp2/input/plot.in
-echo "line 2         5755.   5755."  >> Transfer_to_mp2/input/plot.in
-echo "line 3         6716.   6716."  >> Transfer_to_mp2/input/plot.in
-echo "line 4         6731.   6731."  >> Transfer_to_mp2/input/plot.in
+
 
 
 
