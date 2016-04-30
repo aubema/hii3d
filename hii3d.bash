@@ -117,7 +117,7 @@ do
                         mkdir "Transfer_to_mp2/mocassin_cases/"$path"/input"
                         mkdir "Transfer_to_mp2/mocassin_cases/"$path"/output"
                         mv -f densities.tmp densities.dat 
-                        cp -f densities.dat "Transfer_to_mp2/mocassin_cases/"$path
+                        cp -f densities.dat "Transfer_to_mp2/mocassin_cases/"$path"/input"
                         cp -f SIIresol.pgm "Transfer_to_mp2/mocassin_cases/"$path
                         cp -f NIIresol.pgm "Transfer_to_mp2/mocassin_cases/"$path
                         cp -f Ne3D.txt "Transfer_to_mp2/mocassin_cases/"$path
