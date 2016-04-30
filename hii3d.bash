@@ -12,9 +12,10 @@ gfortran prog-rms.f prog-intrants2d.f -o prog-rms
 # set mocassin path on mammouth
 mopath=$HOME/hii3d
 echo $mopath
-rm -f $mopath/leastSquare.bash
-rm -f $mopath/mocassin.bash
-rm -f $mopath/mocassinPlot.bash
+rm -f $mopath/Transfer_to_mp2/leastSquare.bash
+rm -f $mopath/Transfer_to_mp2/mocassin.bash
+rm -f $mopath/Transfer_to_mp2/mocassinPlot.bash
+rm -f $mopath/Transfer_to_mp2/cases-comparizon.txt
 #
 #
 #
@@ -135,19 +136,23 @@ do
                         echo "line 4         6731.   6731."  >> $mopath/"Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
 #
 # creation of the execute script
+# file mocassin.bash
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath/Transfer_to_mp2/mocassin.bash
                         echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=20 mpirun -np 20 mocassin" >>  $mopath/Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  $mopath/Transfer_to_mp2/mocassin.bash
+# file mocassinPlot.bash
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  $mopath/Transfer_to_mp2/mocassinPlot.bash
                         echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> $mopath/Transfer_to_mp2/mocassinPlot.bash
                         echo "sleep 0.05"  >> $mopath/Transfer_to_mp2/mocassinPlot.bash
+# file leastSquare.bash
                         echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath/Transfer_to_mp2/leastSquare.bash
                         echo "ln -s "$HOME"/hg/hii3d/prog-simul-ratio ." >> $mopath/Transfer_to_mp2/leastSquare.bash
                         echo "ln -s "$HOME"/hg/hii3d/prog-rms ." >> $mopath/Transfer_to_mp2/leastSquare.bash
                         echo "cp -f output/plot.out ." >> $mopath/Transfer_to_mp2/leastSquare.bash
                         echo "./prog-simul-ratio" >> $mopath/Transfer_to_mp2/leastSquare.bash
-                        echo $path > rms.tmp
+                        echo $path > $mopath"/Transfer_to_mp2/mocassin_cases/"$path/rms.tmp
                         echo "./prog-rms < rms.tmp" >> $mopath/Transfer_to_mp2/leastSquare.bash
+                        echo "cat cases-comparizon.tmp >> "$mopath"/Transfer_to_mp2/cases-comparizon.txt" >> $mopath/Transfer_to_mp2/leastSquare.bash
                      done
                   done
                done

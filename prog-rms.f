@@ -27,7 +27,7 @@ c
          enddo
          rms=rmsNii+rmsSii
 
-         open(unit=1,file='cases-comparizon.txt',status='unknown',
+         open(unit=1,file='cases-comparizon.tmp',status='unknown',
      +   position="append")
              write(1,*) name, rms
          close(unit=1)
