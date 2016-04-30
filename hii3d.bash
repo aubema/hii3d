@@ -135,19 +135,19 @@ do
                         echo "line 4         6731.   6731."  >> "Transfer_to_mp2/mocassin_cases/"$path"/input/plot.in"
 #
 # creation of the execute script
-                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath"/mocassin.bash"
-                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=20 mpirun -np 20 mocassin" >> $mopath"/mocassin.bash"
-                        echo "sleep 0.05"  >> $mopath"/mocassin.bash"
-                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath"/mocassinPlot.bash"
-                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> $mopath"/mocassinPlot.bash"
-                        echo "sleep 0.05"  >> $mopath"/mocassinPlot.bash"
-                        echo "cd "$path >> $mopath"/leastSquare.bash"
-                        echo "ln -s "$HOME"/hg/hii3d/prog-simul-ratio ."
-                        echo "ln -s "$HOME"/hg/hii3d/prog-rms ."
-                        echo "cp -f output/plot.out ." >> $mopath"/leastSquare.bash"
-                        echo "./prog-simul-ratio" >> $mopath"/leastSquare.bash"
+                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/mocassin.bash
+                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=20 mpirun -np 20 mocassin" >>  Transfer_to_mp2/mocassin.bash
+                        echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
+                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
+                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> Transfer_to_mp2/mocassinPlot.bash
+                        echo "sleep 0.05"  >> Transfer_to_mp2/mocassinPlot.bash
+                        echo "cd "$path >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s "$HOME"/hg/hii3d/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s "$HOME"/hg/hii3d/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "cp -f output/plot.out ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
                         echo $path > rms.tmp
-                        echo "./prog-rms < rms.tmp" >> $mopath"/leastSquare.bash"
+                        echo "./prog-rms < rms.tmp" >> >> Transfer_to_mp2/leastSquare.bash
                      done
                   done
                done
