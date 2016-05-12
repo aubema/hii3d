@@ -72,6 +72,7 @@ c  Declaration des variables
       real gain,offset,Ne(401,401,401),Te(401,401,401)
       real Nemod(401,401),ine,ene
 
+      real SIIresol(401,401),NIIresol(401,401)
       real SIIresol2(401,401),NIIresol2(401,401)
 
       real dens,aptmp,somme,pi,convr,distet
@@ -175,7 +176,7 @@ c      print*,'Calculation of the 2D SII and NII ratios...'
 c      call SIINIIratio(nbx,nby,SIIrat,NIIrat,sig2no)
 
 
-
+       print*,'Cleaning the lines according to signal to noise'
        call SIINIIClean(ncols,nlines,S6716,S6731,N6584,N5755,
      +  sig2no)
 
@@ -186,9 +187,13 @@ c Debut de la transformation en 3D du ratio SII, a l'aide de SIIrat.
 c
 c On appelle la routine squaredata qui cree les matrices box x box centrees sur chaque pixel.
       print*,'Extraction of spatial information around each pixel...'
+      print*,'SII 6716...'
       call squaredata(nbx,nby,box,S6716,sqrS6716,ndatS6716)
+      print*,'SII 6731...'
       call squaredata(nbx,nby,box,S6731,sqrS6731,ndatS6731)
+      print*,'NII 6584...'
       call squaredata(nbx,nby,box,N6584,sqrN6584,ndatN6584)
+      print*,'NII 5755...'
       call squaredata(nbx,nby,box,N5755,sqrN5755,ndatN5755)
 c
 c Les statistiques locales seront faites a l'interieur de la matrice square et ndata est le nombre
@@ -198,9 +203,13 @@ c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour cha
 c box x box centree sur chaque pixel.
 c    
       print*,'Doing statistical analysis on each 2D grid point...'
+      print*,'SII 6716...'
       call moysigma(nbx,nby,box,sqrS6716,ndatS6716,moyS6716,sigmS6716)
+      print*,'SII 6731...'
       call moysigma(nbx,nby,box,sqrS6731,ndatS6731,moyS6731,sigmS6731)
+      print*,'NII 6584...'
       call moysigma(nbx,nby,box,sqrN6584,ndatN6584,moyN6584,sigmN6584)
+      print*,'NII 5775...'
       call moysigma(nbx,nby,box,sqrN5755,ndatN5755,moyN5755,sigmN5755)
 c
 c elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
@@ -263,6 +272,25 @@ c
       enddo
       tdfile='shape.txt'
       call WriteIFrIT(ni,nj,nk,shap,tdfile)
+
+
+c
+c Calcul des ratios avec la nouvelle resolution
+       do i=1,ni
+        do j=1,nj
+         if (S6731resol(i,j).gt.0.) then
+         SIIresol(i,j)=S6716resol(i,j)/S6731resol(i,j)
+         else
+         SIIresol(i,j)=0.
+         endif
+         if (N5755resol(i,j).gt.0.) then
+         NIIresol(i,j)=4.*N6584resol(i,j)/(3.*N5755resol(i,j))
+         else
+         SIIresol(i,j)=0.
+         endif
+        enddo
+       enddo
+
 
 c
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
@@ -330,6 +358,7 @@ c
           do k=kmin,kmax,box
             kk=kk+1
  210        if (fill(i,j,k).eq.2) then
+       print*,'dans l objet'
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de flux de raie
 c dans un ensemble de données cree a partir de moy et sigma.     
  100          if (sigmS6716(i,j).ne.0.) then        
@@ -377,7 +406,7 @@ c
               if ((NII3d(ii,jj,kk).lt.35.).or.
      +        (NII3d(ii,jj,kk).gt.450.)) goto 200
 
-
+           print*,NII3d(ii,jj,kk),ii,jj,kk
 
             else 
               SII3d(ii,jj,kk)=0.
@@ -428,7 +457,7 @@ c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree a
           enddo
         enddo
       enddo
-      print*,'Averaged electron density=',Nemoy/real(NNe)
+      print*,'Averaged electron density=',Nemoy/real(NNe),NNe
       print*,'Printing out the 2D images and 3D files...'
 c Fin de la creation de la matrice 3D.
 c Nous possedons alors des matrice SII3d et NII3d en 3D, remplie de ratios de raies.
@@ -638,6 +667,7 @@ c utilisables par le programme IFrIT.
 c
 c Save the 3D Ne for Mocassin
 ci=imin,imax,box
+      print*,'Saving 3D file for Mocassin...'
       open(unit=6,file='densities.dat',status='unknown')
         do ip=1,71
            i=ip+xep-36
@@ -646,17 +676,18 @@ ci=imin,imax,box
               do kp=1,71
                  k=kp+zep-36
                  if ((k.ge.1).and.(j.ge.1).and.(i.ge.1)) then
-                    write(6,2000) real(ip-36)*tpix,real(jp-36)*tpix,
+                 print*,i,j,k
+                    write(6,201) real(ip-36)*tpix,real(jp-36)*tpix,
      +              real(kp-36)*tpix,Ne(i,j,k)
                  else
-                    write(6,2000) real(ip-36)*tpix,real(jp-36)*tpix,
+                    write(6,201) real(ip-36)*tpix,real(jp-36)*tpix,
      +              real(kp-36)*tpix,zero
                  endif
               enddo
            enddo
          enddo
       close(unit=6)
- 2000   FORMAT(E15.8,1X,E15.8,1X,E15.8,1X,F8.1)
+ 201   FORMAT(E15.8,1X,E15.8,1X,E15.8,1X,F8.1)
       open(unit=6,file='input.in',status='unknown')
           write(6,*) 'autoPackets 0.20 2. 1000000000'
           write(6,*) 'TStellar ', Tstellar

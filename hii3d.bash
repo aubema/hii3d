@@ -53,7 +53,7 @@ let ye=161         # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
-angx="135."
+angx="100."
 #angz="1 10 20 30 40 50 60 70 80"
 #distet="10 20 30 40 50 60 70 80"
 #rcirc="40 50 60 70 80"
