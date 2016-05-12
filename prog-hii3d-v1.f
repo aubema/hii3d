@@ -34,29 +34,56 @@ c    Copyright (C) 2015  Martin Aubé, Alexandre Carbonneau, Catherine Masson,
 c    Maude Roy-Labbe, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
 c  Declaration des variables           
-      real sqrS(401,401,225),sqrN(401,401,225)
-      real moyS(401,401),moyN(401,401),sigmS(401,401)
-      real sigmN(401,401),SIIrat(401,401),NIIrat(401,401)
-      real R3D,rcirc,intmnN(401,401),intmnS(401,401),intmxN(401,401)
-      real intmxS(401,401)
+      real Nemoy
+      real sqrS6716(401,401,225),sqrS6731(401,401,225)
+      real sqrN6584(401,401,225),sqrN5755(401,401,225)
+
+      real moyS6716(401,401),moyS6731(401,401)
+      real moyN6584(401,401),moyN5755(401,401)
+      real sigmS6716(401,401),sigmS6731(401,401)
+      real sigmN6584(401,401),sigmN5755(401,401)
+
+
+      real S6716(401,401),S6731(401,401)
+      real N6584(401,401),N5755(401,401)
+
+      real S6716resol(401,401),S6731resol(401,401)
+      real N6584resol(401,401),N5755resol(401,401)
+
+      real flux1,flux2,rcirc
+
+      real intmxN6584(401,401),intmnN6584(401,401)
+      real intmxN5755(401,401),intmnN5755(401,401)
+      real intmxS6716(401,401),intmnS6716(401,401)
+      real intmxS6731(401,401),intmnS6731(401,401)
+
       real xe,ye                                                              ! xe,ye = position de l etoile centrale                                               
-      real NII3d(401,401,401),SII3d(401,401,401)
+      real S67163d(401,401,401),S67313d(401,401,401)
+      real N65843d(401,401,401),N57553d(401,401,401)
+
       real SIImod(401,401),NIImod(401,401)
       real SIImod2(401,401),NIImod2(401,401)
+
+      real SII3d(401,401,401)
+      real NII3d(401,401,401)
 
 
       real vmin,vmax,xcell0,ycell0
       real gain,offset,Ne(401,401,401),Te(401,401,401)
       real Nemod(401,401),ine,ene
-      real SIIresol(401,401),NIIresol(401,401)
+
       real SIIresol2(401,401),NIIresol2(401,401)
 
       real dens,aptmp,somme,pi,convr,distet
       real thetax,shap(401,401,401),thetaz
       real thickc,nmod,ze,sig2no,tpix
       real Tmin,Tmax,Nmin,Nmax,ra,pixsiz,Tstellar,zero
+      integer NNe
       integer box,ni,nj,nk,ii,jj,kk
-      integer nbx,nby,ndatS(401,401),ndatN(401,401),i,j,k,n
+      integer nbx,nby
+      integer ndatS6716(401,401),ndatS6731(401,401)
+      integer ndatN6584(401,401),ndatN5755(401,401)
+      integer i,j,k,n
       integer valmax,imagx,imagy
       integer imin,imax,jmin,jmax,kmin,kmax
       integer inirand,fill(401,401,401)
@@ -64,6 +91,8 @@ c  Declaration des variables
       character*40 outfil,tdname,tdfile
       character*20 nom
       pi=3.14159265359
+      Nemoy=0.
+      NNe=0
       soonze=71
       zero=0.
       Tstellar=85000.                                                     ! Set the Ionizing star temperature for Mocassin
@@ -141,16 +170,26 @@ c On appelle la routine SIINIIratio qui prend les donnees de raies
 c d'emission pour les transformer en ratio de raies.
 c On se retrouve alors avec une matrice de ratio de raies pour 
 c SII et NII.
-      print*,'Calculation of the 2D SII and NII ratios...'
-      call SIINIIratio(nbx,nby,SIIrat,NIIrat,sig2no)
+
+c      print*,'Calculation of the 2D SII and NII ratios...'
+c      call SIINIIratio(nbx,nby,SIIrat,NIIrat,sig2no)
+
+
+
+       call SIINIIClean(ncols,nlines,S6716,S6731,N6584,N5755,
+     +  sig2no)
+
+
 c
 c ===============================================================================================
 c Debut de la transformation en 3D du ratio SII, a l'aide de SIIrat.
 c
 c On appelle la routine squaredata qui cree les matrices box x box centrees sur chaque pixel.
       print*,'Extraction of spatial information around each pixel...'
-      call squaredata(nbx,nby,box,SIIrat,sqrS,ndatS)
-      call squaredata(nbx,nby,box,NIIrat,sqrN,ndatN)
+      call squaredata(nbx,nby,box,S6716,sqrS6716,ndatS6716)
+      call squaredata(nbx,nby,box,S6731,sqrS6731,ndatS6731)
+      call squaredata(nbx,nby,box,N6584,sqrN6584,ndatN6584)
+      call squaredata(nbx,nby,box,N5755,sqrN5755,ndatN5755)
 c
 c Les statistiques locales seront faites a l'interieur de la matrice square et ndata est le nombre
 c de donnees valides dans le carre.
@@ -159,14 +198,18 @@ c On appelle la routine moysigma qui calcule la moyenne et l'ecart type pour cha
 c box x box centree sur chaque pixel.
 c    
       print*,'Doing statistical analysis on each 2D grid point...'
-      call moysigma(nbx,nby,box,sqrS,ndatS,moyS,sigmS)
-      call moysigma(nbx,nby,box,sqrN,ndatN,moyN,sigmN)
+      call moysigma(nbx,nby,box,sqrS6716,ndatS6716,moyS6716,sigmS6716)
+      call moysigma(nbx,nby,box,sqrS6731,ndatS6731,moyS6731,sigmS6731)
+      call moysigma(nbx,nby,box,sqrN6584,ndatN6584,moyN6584,sigmN6584)
+      call moysigma(nbx,nby,box,sqrN5755,ndatN5755,moyN5755,sigmN5755)
 c
 c elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
 c Uniquement les valeurs de 2 dans la matrice fill seront denombres
       print*,'Adaptation of the stastistics to the 3D space...'
-      call ensigma(sigmS,nbx,nby,fill)
-      call ensigma(sigmN,nbx,nby,fill)
+      call ensigma(sigmS6716,nbx,nby,fill)
+      call ensigma(sigmS6731,nbx,nby,fill)
+      call ensigma(sigmN6584,nbx,nby,fill)
+      call ensigma(sigmN5755,nbx,nby,fill)
 c
 c Lorsqu on ne change pas la resolution, la distribution des donnees est trop smooth derriere
 c chaque pixel ce qui ne permet pas de reproduire les grumeaux (clumps) presents sur l image observee.
@@ -196,8 +239,10 @@ c
         ni=ni+1
         do j=jmin,jmax,box
           nj=nj+1
-          SIIresol(ni,nj)=moyS(i,j)
-          NIIresol(ni,nj)=moyN(i,j)
+          S6716resol(ni,nj)=moyS6716(i,j)
+          S6731resol(ni,nj)=moyS6731(i,j)
+          N6584resol(ni,nj)=moyN6584(i,j)
+          N5755resol(ni,nj)=moyN5755(i,j)
         enddo
       enddo
       ni=0
@@ -218,6 +263,7 @@ c
       enddo
       tdfile='shape.txt'
       call WriteIFrIT(ni,nj,nk,shap,tdfile)
+
 c
 c On fait la matrice 3D, jusqu'au commentaire Fin de la creation de la matrice 3D.
 c
@@ -225,43 +271,52 @@ c rechercher des bornes superieures et inferieures pour l histogramme +/- 3 sigm
       print*,'Calculation of the 3D NII and SII ratios...'
       do i=imin,imax,box
         do j=jmin,jmax,box
-          intmxN(i,j)=-10000.
-          intmnN(i,j)=10000.
-          intmxS(i,j)=-10000.
-          intmnS(i,j)=10000.
+
+          intmxS6716(i,j)=-10000.
+          intmnS6716(i,j)=10000.
+          intmxS6731(i,j)=-10000.
+          intmnS6731(i,j)=10000.
+
+          intmxN6584(i,j)=-10000.
+          intmnN6584(i,j)=10000.
+          intmxN5755(i,j)=-10000.
+          intmnN5755(i,j)=10000.
+
         enddo
       enddo
       do i=imin,imax,box
         do j=jmin,jmax,box
-          if (moyS(i,j)-3.*sigmS(i,j).lt.intmnS(i,j)) then
-            intmnS(i,j)=moyS(i,j)-3.*sigmS(i,j)
+          if (moyS6716(i,j)-3.*sigmS6716(i,j).lt.intmnS6716(i,j)) then
+            intmnS6716(i,j)=moyS6716(i,j)-3.*sigmS6716(i,j)
           endif
-          if (moyN(i,j)-3.*sigmN(i,j).lt.intmnN(i,j)) then
-            intmnN(i,j)=moyN(i,j)-3.*sigmN(i,j)
+          if (moyS6716(i,j)+3.*sigmS6716(i,j).gt.intmxS6716(i,j)) then
+            intmxS6716(i,j)=moyS6716(i,j)+3.*sigmS6716(i,j)
           endif
-          if (moyS(i,j)+3.*sigmS(i,j).gt.intmxS(i,j)) then
-            intmxS(i,j)=moyS(i,j)+3.*sigmS(i,j)
+
+          if (moyS6731(i,j)-3.*sigmS6731(i,j).lt.intmnS6731(i,j)) then
+            intmnS6731(i,j)=moyS6731(i,j)-3.*sigmS6731(i,j)
           endif
-          if (moyN(i,j)+3.*sigmN(i,j).gt.intmxN(i,j)) then
-            intmxN(i,j)=moyN(i,j)+3.*sigmN(i,j)
+          if (moyS6731(i,j)+3.*sigmS6731(i,j).gt.intmxS6731(i,j)) then
+            intmxS6731(i,j)=moyS6731(i,j)+3.*sigmS6731(i,j)
           endif
-c Selon le graphique d'Osterbrock, le min=0.45 et le max=1.43 pour la raie SII.
-c          if (intmnS(i,j).lt.0.45) print*,'moins que 0.45',intmnS(i,j)
-          if (intmnS(i,j).lt.0.45) intmnS(i,j)=0.45
-c          if (intmxS(i,j).gt.1.43) print*,'plus que 1.43',intmxS(i,j)
-          if (intmxS(i,j).gt.1.43) intmxS(i,j)=1.43
-          if (intmnN(i,j).lt.35.) then
-c             print*,'moins que 35',intmnN(i,j)
-             intmnN(i,j)=35.
+
+          if (moyN6584(i,j)-3.*sigmN6584(i,j).lt.intmnN6584(i,j)) then
+            intmnN6584(i,j)=moyN6584(i,j)-3.*sigmN6584(i,j)
           endif
-          if (intmxN(i,j).gt.450.) then
-c             print*,'plus que 450',intmxN(i,j)
-             intmxN(i,j)=450.
+          if (moyN6584(i,j)+3.*sigmN6584(i,j).gt.intmxN6584(i,j)) then
+            intmxN6584(i,j)=moyN6584(i,j)+3.*sigmN6584(i,j)
           endif
+
+          if (moyN5755(i,j)-3.*sigmN5755(i,j).lt.intmnN5755(i,j)) then
+            intmnN5755(i,j)=moyN5755(i,j)-3.*sigmN5755(i,j)
+          endif
+          if (moyN5755(i,j)+3.*sigmN5755(i,j).gt.intmxN5755(i,j)) then
+            intmxN5755(i,j)=moyN5755(i,j)+3.*sigmN5755(i,j)
+          endif
+
         enddo
       enddo
 
-c EST-CE QU IL FAUT METTRE CES LIMITES POUR NII?
 c
 c On tire aleatoirement sur les distributions.
 c
@@ -270,35 +325,70 @@ c
         jj=0
         ii=ii+1
         do j=jmin,jmax,box
-c          SIIverif(ii,jj)=0.
           kk=0
           jj=jj+1
           do k=kmin,kmax,box
             kk=kk+1
  210        if (fill(i,j,k).eq.2) then
-c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
+c On appelle la routine gaussienne qui tire aleatoirement une valeur de flux de raie
 c dans un ensemble de données cree a partir de moy et sigma.     
-              if (sigmS(i,j).ne.0.) then        
-                call gaussienne(moyS(i,j),sigmS(i,j),R3D,
-     +          intmnS(i,j),intmxS(i,j))
-                SII3d(ii,jj,kk)=R3D
+ 100          if (sigmS6716(i,j).ne.0.) then        
+                call gaussienne(moyS6716(i,j),sigmS6716(i,j),flux1,
+     +          intmnS6716(i,j),intmxS6716(i,j))
+                S67163d(ii,jj,kk)=flux1
               else
-                SII3d(ii,jj,kk)=0.
+                S67163d(ii,jj,kk)=0.
               endif
-c              SIIverif(ii,jj)=SIIverif(ii,jj)+SII3d(ii,jj,kk)
-c On appelle la routine gaussienne qui tire aleatoirement une valeur de ratio de raie
+              if (sigmS6731(i,j).ne.0.) then        
+                call gaussienne(moyS6731(i,j),sigmS6731(i,j),flux2,
+     +          intmnS6731(i,j),intmxS6731(i,j))
+                S67313d(ii,jj,kk)=flux2
+              else
+                S67313d(ii,jj,kk)=0.
+              endif
+
+c calculer le ratio et verifier si la valeur est dans les limites possibles
+c 
+              SII3d(ii,jj,kk)=flux1/flux2
+              if ((SII3d(ii,jj,kk).lt.0.45).or.
+     +        (SII3d(ii,jj,kk).gt.1.43)) goto 100
+
+c
+c On appelle la routine gaussienne qui tire aleatoirement une valeur de flux de raie
 c dans un ensemble de données cree a partir de moy et sigma.
-              if (sigmN(i,j).ne.0.) then
-                call gaussienne(moyN(i,j),sigmN(i,j),R3D,
-     +          intmnN(i,j),intmxN(i,j))
-                NII3d(ii,jj,kk)=R3D
+ 200          if (sigmN6584(i,j).ne.0.) then        
+                call gaussienne(moyN6584(i,j),sigmN6584(i,j),flux1,
+     +          intmnN6584(i,j),intmxN6584(i,j))
+                N65843d(ii,jj,kk)=flux1
               else
-                NII3d(ii,jj,kk)=0.
+                N65843d(ii,jj,kk)=0.
               endif
+              if (sigmN5755(i,j).ne.0.) then        
+                call gaussienne(moyN5755(i,j),sigmN5755(i,j),flux2,
+     +          intmnN5755(i,j),intmxN5755(i,j))
+                N57553d(ii,jj,kk)=flux2
+              else
+                N57553d(ii,jj,kk)=0.
+              endif
+
+c calculer le ratio et verifier si la valeur est dans les limites possibles
+c 
+              NII3d(ii,jj,kk)=4.*flux1/(3.*flux2)
+              if ((NII3d(ii,jj,kk).lt.35.).or.
+     +        (NII3d(ii,jj,kk).gt.450.)) goto 200
+
+
+
             else 
               SII3d(ii,jj,kk)=0.
               NII3d(ii,jj,kk)=0.
+
             endif
+
+
+
+c
+c
             aptmp=10000.
             dens=0.
 c Si la valeur ne converge pas, on augmente le k.
@@ -323,6 +413,10 @@ c Si le ratio est nul, les temperature et la densite ne sont pas consideres.
               Ne(ii,jj,kk)=0.
               Te(ii,jj,kk)=0.
             endif
+            if (Ne(ii,jj,kk).gt.0.) then
+              Nemoy=Nemoy+Ne(ii,jj,kk)
+              NNe=NNe+1
+            endif
 c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree au debut du programme.
             if (fill(i,j,k).eq.0) then
               Ne(ii,jj,kk)=ene
@@ -334,6 +428,7 @@ c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree a
           enddo
         enddo
       enddo
+      print*,'Averaged electron density=',Nemoy/real(NNe)
       print*,'Printing out the 2D images and 3D files...'
 c Fin de la creation de la matrice 3D.
 c Nous possedons alors des matrice SII3d et NII3d en 3D, remplie de ratios de raies.
@@ -551,17 +646,17 @@ ci=imin,imax,box
               do kp=1,71
                  k=kp+zep-36
                  if ((k.ge.1).and.(j.ge.1).and.(i.ge.1)) then
-                    write(6,200) real(ip-36)*tpix,real(jp-36)*tpix,
+                    write(6,2000) real(ip-36)*tpix,real(jp-36)*tpix,
      +              real(kp-36)*tpix,Ne(i,j,k)
                  else
-                    write(6,200) real(ip-36)*tpix,real(jp-36)*tpix,
+                    write(6,2000) real(ip-36)*tpix,real(jp-36)*tpix,
      +              real(kp-36)*tpix,zero
                  endif
               enddo
            enddo
          enddo
       close(unit=6)
- 200   FORMAT(E15.8,1X,E15.8,1X,E15.8,1X,F8.1)
+ 2000   FORMAT(E15.8,1X,E15.8,1X,E15.8,1X,F8.1)
       open(unit=6,file='input.in',status='unknown')
           write(6,*) 'autoPackets 0.20 2. 1000000000'
           write(6,*) 'TStellar ', Tstellar
