@@ -3,9 +3,10 @@
 # hii3d compiling script
 #
 #cd $HOME/svn/hii3d
-gfortran -mcmodel=medium -Wall -fcheck=all -g -fbacktrace -ffpe-trap=zero,overflow,underflow prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
+gfortran -mcmodel=medium -Wall -fcheck=all -g -fbacktrace -ffpe-trap=zero,overflow,underflow prog-hii3d-v1.f prog-CleanSIINII.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 gfortran prog-simul-ratio.f prog-extrant2d.f -o prog-simul-ratio
 gfortran prog-rms.f prog-intrants2d.f -o prog-rms
+gfortran prog-solution.f -o prog-solution
 
 # gfortran -mcmodel=large prog-hii3d-v1.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 #Compiling done
@@ -52,7 +53,7 @@ let ye=161         # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
-angx="135."
+angx="100."
 #angz="1 10 20 30 40 50 60 70 80"
 #distet="10 20 30 40 50 60 70 80"
 #rcirc="40 50 60 70 80"
