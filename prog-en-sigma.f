@@ -23,10 +23,9 @@ c    montant un flag = 2 dans la matrice fill(i,j,k)
 c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
-        subroutine ensigma(sigma,nbx,nby,fill)
-        real sigma(401,401),nvoxel
+        subroutine ensigma(moy,sigma,nbx,nby,fill)
+        real moy(401,401),sigma(401,401),nvoxel
         integer fill(401,401,401)
-c toverr est l etirement de l'ellipse (a valider grand axe sur petit axe? )
         integer nbx,nby
         open(unit=1,file='rond.in',status='old')
         read(1,*) xc,yc
@@ -40,7 +39,13 @@ c La boucle fait en sorte de modifier tous les sigmas existants.
                       nvoxel=nvoxel+1.
                    endif
                 enddo
-                sigma(i,j)=sigma(i,j)*sqrt(nvoxel)
+                if (nvoxel.gt.0) then
+                  moy(i,j)=moy(i,j)/nvoxel
+                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel)/nvoxel
+                else
+                  moy(i,j)=0.
+                  sigma(i,j)=0.
+                endif
             enddo
         enddo
         return

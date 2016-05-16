@@ -207,11 +207,14 @@ c
 c
 c elargissement des ecarts type en fonction de l epaisseur de l objet vis a vis de chaque pixel
 c Uniquement les valeurs de 2 dans la matrice fill seront denombres
+c aussi nous convertissons la somme des flux le long de la ligne de visee en flux moyen par voxel
+c idem pour l'ecart type qui est corrige pour passer de somme a moyenne
+c on prends alors la moyenne divise par N et l'ecart type divise par N
       print*,'Adaptation of the stastistics to the 3D space...'
-      call ensigma(sigmS6716,nbx,nby,fill)
-      call ensigma(sigmS6731,nbx,nby,fill)
-      call ensigma(sigmN6584,nbx,nby,fill)
-      call ensigma(sigmN5755,nbx,nby,fill)
+      call ensigma(moyS6716,sigmS6716,nbx,nby,fill)
+      call ensigma(moyS6731,sigmS6731,nbx,nby,fill)
+      call ensigma(moyN6584,sigmN6584,nbx,nby,fill)
+      call ensigma(moyN5755,sigmN5755,nbx,nby,fill)
 c
 c Lorsqu on ne change pas la resolution, la distribution des donnees est trop smooth derriere
 c chaque pixel ce qui ne permet pas de reproduire les grumeaux (clumps) presents sur l image observee.
