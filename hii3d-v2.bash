@@ -53,13 +53,13 @@ let ye=161         # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
-angx="100."
+angx="110."
 #angz="1 10 20 30 40 50 60 70 80"
 #distet="10 20 30 40 50 60 70 80"
 #rcirc="40 50 60 70 80"
-angz="10"
-distet="40"
-rcirc="80"
+angz="1 10 20 30 40 50 60 70 80"
+distet="10 20 30 40 50 60 70 80"
+rcirc="40 50 60 70 80"
 thickcstep="20"
 ine="0."
 ene="0."
@@ -145,9 +145,9 @@ do
                         echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
                         cat $HOME/hg/hii3d/sub.pbs | sed 's/toto/mocassinPlot/g' > submitPlot.pbs
-                        mv -f submit.pbs Transfer_to_mp2/mocassin_cases/$path
+                        mv -f submitPlot.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
-                        echo "qsub ./submit.pbs" >> Transfer_to_mp2/mocassinPlot.bash
+                        echo "qsub ./submitPlot.pbs" >> Transfer_to_mp2/mocassinPlot.bash
                         echo "sleep 0.05"  >> Transfer_to_mp2/mocassinPlot.bash
 # file leastSquare.bash
                         echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/leastSquare.bash

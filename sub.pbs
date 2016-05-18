@@ -13,5 +13,8 @@ export ppn=24
 # set your executable file
 myExe=/home/aube_group/hii3d/mocassin.2.02.70/toto
 
+# link all mocassin files into the execution directory
+ln -s /home/aube_group/hii3d/mocassin.2.02.70/* .
+
 # start the application
 mpiexec -n $[PBS_NUM_NODES*ppn] -npernode $ppn $myExe >> stdout

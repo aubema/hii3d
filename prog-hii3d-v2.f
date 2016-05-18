@@ -721,7 +721,6 @@ ci=imin,imax,box
               do kp=1,71
                  k=kp+zep-36
                  if ((k.ge.1).and.(j.ge.1).and.(i.ge.1)) then
-                 print*,i,j,k
                     write(6,301) real(ip-36)*tpix,real(jp-36)*tpix,
      +              real(kp-36)*tpix,Ne(i,j,k)
                  else
@@ -829,20 +828,6 @@ c On imprime une image de la densite Ne modelisee.
 c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
       call extrant2d (outfil,Nemod,nom,xcell0,ycell0,pixsiz,
      +gain,offset,ni,nj,valmax)
-
-
-
-c Ici, on appelle MOCASSIN.
-
-
-
-
-c On compare l'image originale avec l'image de MOCASSIN.
-c On garde la meilleure compatibilite.
-
-                                                                          ! ATTENTION, cette partie reste a ecrire, il va falloir faire une boucle qui analyse point par point la compatibilite et qui
-                                                                          ! la cote en pourcentage, pour pouvoir conserver le meilleur resultat. Il faut un if qui va sassurer de conserver la meilleure
-                                                                          ! matrice et tous ses parametres.
 
 c Fin du programme hii3d de creation d'une matrice 3D de la nebuleuse.
         stop
