@@ -138,12 +138,16 @@ do
 #
 # creation of the execute script
 # file mocassin.bash
+                        cat $HOME/hg/hii3d/sub.pbs | sed 's/toto/mocassin/g' > submit.pbs
+                        mv -f submit.pbs $mopath"/Transfer_to_mp2/mocassin_cases/"$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath/Transfer_to_mp2/mocassin.bash
-                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=20 mpirun -np 20 mocassin" >>  $mopath/Transfer_to_mp2/mocassin.bash
+                        echo "qsub ./submit.pbs" >>  $mopath/Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  $mopath/Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
+                        cat $HOME/hg/hii3d/sub.pbs | sed 's/toto/mocassinPlot/g' > submit.pbs
+                        mv -f submit.pbs $mopath"/Transfer_to_mp2/mocassin_cases/"$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  $mopath/Transfer_to_mp2/mocassinPlot.bash
-                        echo "qsub -W umask=0002 -q qwork@mp2 -l walltime=1:00:00,nodes=1 mocassinPlot" >> $mopath/Transfer_to_mp2/mocassinPlot.bash
+                        echo "qsub ./submit.pbs" >> $mopath/Transfer_to_mp2/mocassinPlot.bash
                         echo "sleep 0.05"  >> $mopath/Transfer_to_mp2/mocassinPlot.bash
 # file leastSquare.bash
                         echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> $mopath/Transfer_to_mp2/leastSquare.bash

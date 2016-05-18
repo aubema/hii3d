@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -N MyJob
+#PBS -l nodes=1
+#PBS -l walltime=120:00:00
+#PBS -q qwork@mp2
+
+
+cd $PBS_O_WORKDIR
+
+# choose mpi-tasks per node *** there are 24 cores/node
+export ppn=24
+
+# set your executable file
+myExe=/home/aube_group/hii3d/mocassin.2.02.70/toto
+
+# start the application
+mpiexec -n $[PBS_NUM_NODES*ppn] -npernode $ppn $myExe >> stdout
