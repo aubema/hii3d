@@ -135,12 +135,6 @@ do
                         echo "line 2         5755.   5755."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
                         echo "line 3         6716.   6716."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
                         echo "line 4         6731.   6731."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-# creating a photoSource.out file
-                        echo "           1  number of photon sources" > Transfer_to_mp2/mocassin_cases/$path"/output/photoSource.out"
-                        echo " 'blackbody'   80000.00       502.6983       640000000  0.0000000E+00"  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-                        echo "  0.0000000E+00  0.0000000E+00 blackbody  0.0000000E+00"  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-                        echo " (contShape, T_eff[K], L_* [E36 erg/s], nPackets, (x,y,z) position, spID, tstep)"  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-
 #
 # creation of the execute script
 # file mocassin.bash
@@ -150,7 +144,7 @@ do
                         echo "qsub ./submit.pbs" >>  Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
-                        cat $HOME/hg/hii3d/sub.pbs | sed 's/toto/mocassinPlot/g' > submit.pbs
+                        cat $HOME/hg/hii3d/sub.pbs | sed 's/toto/mocassinPlot/g' > submitPlot.pbs
                         mv -f submit.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
                         echo "qsub ./submit.pbs" >> Transfer_to_mp2/mocassinPlot.bash
