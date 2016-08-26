@@ -151,8 +151,8 @@ do
                         echo "sleep 0.05"  >> Transfer_to_mp2/mocassinPlot.bash
 # file leastSquare.bash
                         echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s \$HOME/hg/hii3d/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s \$HOME/hg/hii3d/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s \$HOME/hg/hii3d/bin/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s \$HOME/hg/hii3d/bin/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
                         echo "cp -f output/plot.out ." >> Transfer_to_mp2/leastSquare.bash
                         echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
                         echo $path > Transfer_to_mp2/mocassin_cases/$path/rms.tmp
