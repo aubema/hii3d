@@ -48,7 +48,7 @@ done
 
 #read rcirc          # de-commenter pour retourner au mode interactif
 let xe=154         # commenter pour retourner au mode interactif
-let ye=161         # commenter pour retourner au mode interactif
+let ye=161         # commenter pour retourner au mode interactif - coordonnees ny-position sur l'image
 #let rcirc=70        # commenter pour retourner au mode interactif
 ni=0
 # ===============
