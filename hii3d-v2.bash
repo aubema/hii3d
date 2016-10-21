@@ -11,7 +11,7 @@ gfortran prog-solution.f -o prog-solution
 # gfortran -mcmodel=large prog-hii3d-v2.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 #Compiling done
 # set execution path on mammouth. You will put the Transfer_to_mp2 there.
-mopath=/mnt/parallel_scratch_ms2_wipe_on_august_2017/aube/aube_group
+mopath=/mnt/parallel_scratch_mp2_wipe_on_august_2017/aube/aube_group
 echo $mopath
 rm -f Transfer_to_mp2/leastSquare.bash
 rm -f Transfer_to_mp2/mocassin.bash
