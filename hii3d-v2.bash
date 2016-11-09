@@ -155,7 +155,7 @@ do
                         echo "ln -s \$HOME/hg/hii3d/bin/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
                         echo "cp -f output/plot.out ." >> Transfer_to_mp2/leastSquare.bash
                         echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
-                        echo "echo \""$path" \"> Transfer_to_mp2/mocassin_cases/"$path"/rms.tmp" >> Transfer_to_mp2/leastSquare.bash
+                        echo "echo \""$path" \"> rms.tmp" >> Transfer_to_mp2/leastSquare.bash
                         echo "./prog-rms < rms.tmp" >> Transfer_to_mp2/leastSquare.bash
                         echo "cat cases-comparizon.tmp >> "$mopath"/Transfer_to_mp2/cases-comparizon.txt" >> Transfer_to_mp2/leastSquare.bash
                      done
