@@ -77,15 +77,14 @@ do
          for l in $rcirc
 # m stands for thickness index
          do m=0
-            while [ $m -lt $l ]
+            while [ $m -lt $l ]               # on s'assure que l'epaisseur de la coquille ne depasse pas son rayon
             do let m=m+thickstep
-               if [ $m -eq 0 ]
-               then echo "m="$m
-               fi
-               for n in $ine
-               do 
-                  for o in $ene
-                  do #helping the random number to be random
+               if [ $m -le $l ]
+               then echo ""
+                  for n in $ine
+                  do 
+                     for o in $ene
+                     do #helping the random number to be random
                         sec=`date '+%S'| sed 's/^0*//'`
                         min=`date '+%M'| sed 's/^0*//'`
                         day=`date '+%d'| sed 's/^0*//'`
@@ -150,8 +149,11 @@ do
                         echo "cat cases-comparizon.tmp >> "$mopath"/Transfer_to_mp2/cases-comparizon.txt" >> Transfer_to_mp2/leastSquare.bash
                      done
                   done
-               done
+               else
+                 echo "m="$m
+               fi
             done
          done
       done
    done
+done
