@@ -44,10 +44,10 @@ ni=0
 # ===============
 # definition des cas a modeliser
 angx="110."
-angz="1 10 20 30 40 50 60 70 80"
-distet="10 20 30 40 50 60 70 80"
-rcirc="40 50 60 70 80"
-thickstep="20"
+angz="1 3 5 7 9 11 12 14 16"
+distet="2 5 8 11 14 17 "
+rcirc="40 42 44 46 48 50"
+thickstep="60"
 ine="0."
 ene="0."
 tpix=6.E16   # taille d'un pixel en UNITES?
@@ -76,9 +76,13 @@ do
       do 
          for l in $rcirc
 # m stands for thickness index
+
          do m=0
             while [ $m -lt $l ]               # on s'assure que l'epaisseur de la coquille ne depasse pas son rayon
             do let m=m+thickstep
+               if [ $m -gt $l ]               # si le thickstep est superieur au rayon de la coquille on ne modelise qu'une sphere pleine
+               then let m=l
+               fi
                if [ $m -le $l ]
                then echo ""
                   for n in $ine
