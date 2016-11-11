@@ -30,7 +30,6 @@ n=0
 for i in $list
 do imstat $i > toto.tmp #for each image, exctract image size.
    read bidon bidon nx bidon ny bidon < toto.tmp
-#   echo $i $nx $ny
    echo $nx $ny > geometry.tmp #extract size in geometry.
    imlist $i > $i.txt #extract pixels value.
    let n=n+1
@@ -39,28 +38,16 @@ echo $n >> geometry.tmp
 for i in $list
 do echo $i.txt >> geometry.tmp #add image name.txt in geometry.
 done
-#display $i         de-commenter pour retourner au mode interactif
-#ATTENTION remettre les let sans commentaire lorsque tests finis.
-#echo "Enter central star coordinate with the wheel button"          de-commenter pour retourner au mode interactif
-#read xc yc         # de-commenter pour retourner au mode interactif
-              #let xc=xc+1    EST_CE ENCORE UTILE
-              #let yc=yc+1
-
-#read rcirc          # de-commenter pour retourner au mode interactif
 let xe=154         # commenter pour retourner au mode interactif
 let ye=161         # commenter pour retourner au mode interactif - coordonnees ny-position sur l'image
-#let rcirc=70        # commenter pour retourner au mode interactif
 ni=0
 # ===============
 # definition des cas a modeliser
 angx="110."
-#angz="1 10 20 30 40 50 60 70 80"
-#distet="10 20 30 40 50 60 70 80"
-#rcirc="40 50 60 70 80"
 angz="1 10 20 30 40 50 60 70 80"
 distet="10 20 30 40 50 60 70 80"
 rcirc="40 50 60 70 80"
-thickcstep="20"
+thickstep="20"
 ine="0."
 ene="0."
 tpix=6.E16   # taille d'un pixel en UNITES?
@@ -70,7 +57,7 @@ angx=`echo $angx`
 angz=`echo $angz`
 distet=`echo $distet`
 rcirc=`echo $rcirc`
-thickc=`echo $thickc`
+thickstep=`echo $thickstep`
 ine=`echo $ine`
 ene=`echo $ene`
 echo $xe $ye > rond.in
@@ -91,7 +78,10 @@ do
 # m stands for thickness index
          do m=0
             while [ $m -lt $l ]
-            do let m=m+thickcstep
+            do let m=m+thickstep
+               if [ $m -eq 0 ]
+               then echo "m="$m
+               fi
                for n in $ine
                do 
                   for o in $ene
@@ -165,8 +155,3 @@ do
          done
       done
    done
-
-
-
-
-
