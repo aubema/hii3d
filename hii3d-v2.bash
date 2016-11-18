@@ -151,7 +151,17 @@ do
                         echo "echo \""$path" \"> rms.tmp" >> Transfer_to_mp2/leastSquare.bash
                         echo "./prog-rms < rms.tmp" >> Transfer_to_mp2/leastSquare.bash
                         echo "cat cases-comparizon.tmp >> "$mopath"/Transfer_to_mp2/cases-comparizon.txt" >> Transfer_to_mp2/leastSquare.bash
-                     done
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*.mod" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -fr "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/input" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -fr "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/output" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*.gz" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/makefile*" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*.dat" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/accessories" >> Transfer_to_mp2/leastSquare.bash 
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/benchmarks" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/examples" >> Transfer_to_mp2/leastSquare.bash
+                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*ata" >> Transfer_to_mp2/leastSquare.bash
+                   done
                   done
                else
                  echo "m="$m
