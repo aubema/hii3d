@@ -44,10 +44,10 @@ ni=0
 # ===============
 # definition des cas a modeliser
 angx="110."
-angz="1 3 5 7 9 11 12 14 16"
-distet="2 5 8 11 14 17 "
-rcirc="40 42 44 46 48 50"
-thickstep="60"
+angz="1 10 20 30 40 50 60"
+distet="1 10 20 30 40 50 "
+rcirc="30 40 50 60 70 80 90"
+thickstep="10"
 ine="0."
 ene="0."
 tpix=6.E16   # taille d'un pixel en UNITES?

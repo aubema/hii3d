@@ -23,7 +23,7 @@ c    montant un flag = 2 dans la matrice fill(i,j,k)
 c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
-        subroutine ensigma(moy,sigma,nbx,nby,fill)
+        subroutine ensigma(sigma,nbx,nby,fill)
         real moy(401,401),sigma(401,401),nvoxel
         integer fill(401,401,401)
         integer nbx,nby
@@ -40,10 +40,8 @@ c La boucle fait en sorte de modifier tous les sigmas existants.
                    endif
                 enddo
                 if (nvoxel.gt.0) then
-                  moy(i,j)=moy(i,j)/nvoxel
                   sigma(i,j)=sigma(i,j)*sqrt(nvoxel)/nvoxel
                 else
-                  moy(i,j)=0.
                   sigma(i,j)=0.
                 endif
             enddo
