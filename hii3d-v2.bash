@@ -44,8 +44,8 @@ ni=0
 # ===============
 # definition des cas a modeliser
 angx="110."
-angz="1 10 20 30 40 50 60"
-distet="1 10 20 30 40 50 "
+angz="1 10 20 30 40 50 60 70"
+distet="1 10 20 30 40 50 60"
 rcirc="30 40 50 60 70 80 90"
 thickstep="10"
 ine="0."

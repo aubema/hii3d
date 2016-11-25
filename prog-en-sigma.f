@@ -24,7 +24,7 @@ c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
         subroutine ensigma(sigma,nbx,nby,fill)
-        real moy(401,401),sigma(401,401),nvoxel
+        real sigma(401,401),nvoxel
         integer fill(401,401,401)
         integer nbx,nby
         open(unit=1,file='rond.in',status='old')
