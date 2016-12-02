@@ -99,8 +99,11 @@ c  Declaration des variables
       Tstellar=85000.                                                     ! Set the Ionizing star temperature for Mocassin
       Tmin=6900.                                                          ! Valeurs min et max selon table 3 Philips 1998 Astron. Astrophys 340, 527-542
       Tmax=21500.
-      Nmin=20.                                                            ! 20 remplace la valeur de 44.66 de Philips 1998 pour coincider avec Lagrois et al 2015
+      Nmin=5.                                                            ! 20 remplace la valeur de 44.66 de Philips 1998 pour coincider avec Lagrois et al 2015
 c selon Lagrois Ne varie de 20 a 230 cm-1 dans M27 et Te varie de 8400 a 13000K
+c nous repoussé cette limite a 5 sans solide justification pour eviter une boucle infinie.
+c c'est raisonnable puisque les valeurs observees sont des moyennes sur la ligne de visee
+c alors que nous avons un voxel individuel
       Nmax=30200.
       convr=pi/180.                                                       ! angle d'inclinaison dans plan image (x-y) de l'axe des liant les deux coquilles
 c ouvrir le fichier random.tmp pour rendre le nombre plus aleatoire
@@ -394,11 +397,14 @@ c
  210        if (fill(i,j,k).eq.2) then
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de flux de raie
 c dans un ensemble de données cree a partir de moy et sigma.   
- 102          if (sigmS6716(i,j).ne.0.) then    
+              if (sigmS6716(i,j).ne.0.) then    
  100            call gaussienne(moyS6716(i,j),sigmS6716(i,j),flux1,
      +          intmnS6716(i,j),intmxS6716(i,j))
                 S67163d(ii,jj,kk)=flux1
-                if (flux1.le.0.) goto 100
+                if (flux1.le.0.) then
+                   print*,'flux1=',flux1
+                   goto 100
+                endif
               else
                 S67163d(ii,jj,kk)=0.
               endif
@@ -406,7 +412,10 @@ c dans un ensemble de données cree a partir de moy et sigma.
  101            call gaussienne(moyS6731(i,j),sigmS6731(i,j),flux2,
      +          intmnS6731(i,j),intmxS6731(i,j))
                 S67313d(ii,jj,kk)=flux2
-                if (flux2.le.0.) goto 101
+                if (flux2.le.0.) then
+                  print*,'flux2=',flux2
+                  goto 101
+                endif
               else
                 S67313d(ii,jj,kk)=0.
               endif
@@ -416,8 +425,9 @@ c
               if ((sigmS6716(i,j).ne.0.).and.(sigmS6731(i,j).ne.0.)) 
      +        then
                  SII3d(ii,jj,kk)=flux1/flux2
-                 if ((SII3d(ii,jj,kk).lt.0.45).or.
-     +           (SII3d(ii,jj,kk).gt.1.43)) goto 102
+                 if (SII3d(ii,jj,kk).lt.0.45) SII3d(ii,jj,kk)=0.4501
+                 if (SII3d(ii,jj,kk).gt.1.43) SII3d(ii,jj,kk)=1.4299
+c we assume this case to happen when the S/N is bad
               else
                  SII3d(ii,jj,kk)=0.
               endif
@@ -425,11 +435,14 @@ c
 c
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de flux de raie
 c dans un ensemble de données cree a partir de moy et sigma.
- 202          if (sigmN6584(i,j).ne.0.) then        
+              if (sigmN6584(i,j).ne.0.) then        
  200            call gaussienne(moyN6584(i,j),sigmN6584(i,j),flux1,
      +          intmnN6584(i,j),intmxN6584(i,j))
                 N65843d(ii,jj,kk)=flux1
-                if (flux1.le.0.) goto 200
+                if (flux1.le.0.) then
+                   print*,'flux1-6584',flux1
+                   goto 200
+                endif
               else
                 N65843d(ii,jj,kk)=0.
               endif
@@ -437,7 +450,10 @@ c dans un ensemble de données cree a partir de moy et sigma.
  201            call gaussienne(moyN5755(i,j),sigmN5755(i,j),flux2,
      +          intmnN5755(i,j),intmxN5755(i,j))
                 N57553d(ii,jj,kk)=flux2
-                if (flux2.le.0.) goto 201
+                if (flux2.le.0.) then
+                   print*,'flux2-5755',flux2
+                   goto 201
+                endif
               else
                 N57553d(ii,jj,kk)=0.
               endif
@@ -448,8 +464,8 @@ c
               if ((sigmN6584(i,j).ne.0.).and.(sigmN5755(i,j).ne.0.)) 
      +        then
                  NII3d(ii,jj,kk)=4.*flux1/(3.*flux2)
-                 if ((NII3d(ii,jj,kk).lt.35.).or.
-     +           (NII3d(ii,jj,kk).gt.450.)) goto 202
+                 if (NII3d(ii,jj,kk).lt.35.) NII3d(ii,jj,kk)=35.01
+                 if (NII3d(ii,jj,kk).gt.450.) NII3d(ii,jj,kk)=449.99
               else
                  NII3d(ii,jj,kk)=0.
               endif
@@ -479,7 +495,7 @@ c On appelle la routine temperatureNII qui retourne la temperature si on lui don
               enddo
          if (((Te(ii,jj,kk).lt.Tmin).or.(Te(ii,jj,kk).gt.Tmax)).or.
      +   ((Ne(ii,jj,kk).lt.Nmin).or.(Ne(ii,jj,kk).gt.Nmax))) then
-c            print*,ii,jj,Te(ii,jj,kk),Ne(ii,jj,kk)
+            print*,ii,jj,Te(ii,jj,kk),Ne(ii,jj,kk)
             goto 210
          endif
 c Si le ratio est nul, les temperature et la densite ne sont pas consideres.

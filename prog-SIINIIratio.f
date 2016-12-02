@@ -25,7 +25,7 @@ c
 c    Copyright (C) 2013  Alexandre Carbonneau, Catherine Masson (Alexandrine), Maude Roy-Labbe (support moral important) 
 c    et ELPHES+Guigui (support moral moins important),Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c       
-        subroutine SIINIIratio(ncols, nlines,SIIrat,NIIrat,sig2no)
+c        subroutine SIINIIratio(ncols, nlines,SIIrat,NIIrat,sig2no)
         real out(30,401,401),vect(1000000),vmin,vmax,gain,offset
         real valeur(401,401),SIIrat(401,401),NIIrat(401,401)
         real sig2no,xcell0,ycell0,pixsiz
@@ -241,5 +241,5 @@ c On appelle la routine extrant2d qui transcipt l'image dans un fichier.
           call extrant2d (outfil,NIIrat,nom,xcell0,ycell0,pixsiz,
      + gain,offset,nbx,nby,valmax)
 
-        return
+c        return
         end 

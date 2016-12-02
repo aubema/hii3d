@@ -7,6 +7,7 @@ gfortran -mcmodel=medium -Wall -fcheck=all -g -fbacktrace -ffpe-trap=zero,overfl
 gfortran prog-simul-ratio.f prog-extrant2d.f -o prog-simul-ratio
 gfortran prog-rms.f prog-intrants2d.f -o prog-rms
 gfortran prog-solution.f -o prog-solution
+gfortran prog-SIINIIratio.f prog-extrant2d.f -o prog-SIINIIratio
 
 # gfortran -mcmodel=large prog-hii3d-v2.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 #Compiling done
@@ -62,6 +63,11 @@ ine=`echo $ine`
 ene=`echo $ene`
 echo $xe $ye > rond.in
 echo $rcirc >> rond.in  # rayon externe des coquilles
+#
+# creation des images de ratio full resolution
+#
+./prog-SIINIIratio
+#
 # killall display
 #
 
@@ -103,10 +109,11 @@ do
                         echo $n >> hii3d.input
                         echo $o >> hii3d.input
                         echo $tpix >> hii3d.input
+                        path="ax-"$i"_az-"$j"_de-"$k"_rc-"$l"_tc-"$m"_in-"$n"_en-"$o
+                        echo "case:" $path
                         echo "Running hii3d"
                         ./prog-hii3d
-                        path="ax-"$i"_az-"$j"_de-"$k"_rc-"$l"_tc-"$m"_in-"$n"_en-"$o
-                        echo $path
+
                         mkdir Transfer_to_mp2/mocassin_cases/$path
                         cat densities.dat | sed 's/  / /g' | sed 's/  / /g' > densities.tmp
                         mkdir Transfer_to_mp2/mocassin_cases/$path"/input"
