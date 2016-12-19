@@ -96,7 +96,7 @@ c  Declaration des variables
       NNe=0
       soonze=71
       zero=0.
-      Tstellar=85000.                                                     ! Set the Ionizing star temperature for Mocassin
+      Tstellar=108600.                                                     ! Set the Ionizing star temperature for Mocassin
       Tmin=6900.                                                          ! Valeurs min et max selon table 3 Philips 1998 Astron. Astrophys 340, 527-542
       Tmax=21500.
       Nmin=5.                                                            ! 20 remplace la valeur de 44.66 de Philips 1998 pour coincider avec Lagrois et al 2015
