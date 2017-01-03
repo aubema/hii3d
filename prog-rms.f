@@ -29,7 +29,7 @@ c
 
          open(unit=1,file='cases-comparizon.tmp',status='unknown',
      +   position="append")
-             write(1,*) name, rms
+             write(1,*) name, rms, rmsNii, rmsSii
          close(unit=1)
          stop
          end
