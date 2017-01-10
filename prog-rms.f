@@ -6,6 +6,7 @@ c
          real toto
          real rms,rmsNii,rmsSii,dobsnii(401,401),dobssii(401,401)
          real dmodnii(401,401),dmodsii(401,401)
+         real moyNii,moySii,nNii,nSii
          nom='bidon'
          print*,'Name of the case'
          read*,name
@@ -19,12 +20,28 @@ c
          call intrants2d(modSII,dmodsii,nom,toto,toto,toto,nbx,nby)
          rmsNii=0.
          rmsSii=0.
+         moyNii=0.
+         moySii=0.
+         nNii=0.
+         nSii=0.
          do i=1,nbx
            do j=1,nby
+              if (dobsnii(i,j).ne.0.) nNii=nNii+1.
+              if (dobssii(i,j).ne.0.) sNii=sNii+1.
+              moyNii=moyNii+dobsnii(i,j)
+              moySii=moySii+dobssii(i,j)
               rmsNii=rmsNii+(dobsnii(i,j)-dmodnii(i,j))**2.
               rmsSii=rmsSii+(dobssii(i,j)-dmodsii(i,j))**2.
            enddo
          enddo
+         moyNii=moyNii/nNii
+         moySii=moySii/nSii
+         rmsNii=rmsNii/nNii
+         rmsSii=rmsSii/nSii
+         rmsNii=sqrt(rmsNii)
+         rmsSii=sqrt(rmsSii)
+         rmsNii=rmsNii/moyNii
+         rmsSii=rmsSii/moySii
          rms=rmsNii+rmsSii
 
          open(unit=1,file='cases-comparizon.tmp',status='unknown',
