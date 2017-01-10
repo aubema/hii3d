@@ -27,7 +27,7 @@ c
          do i=1,nbx
            do j=1,nby
               if (dobsnii(i,j).ne.0.) nNii=nNii+1.
-              if (dobssii(i,j).ne.0.) sNii=sNii+1.
+              if (dobssii(i,j).ne.0.) nSii=nSii+1.
               moyNii=moyNii+dobsnii(i,j)
               moySii=moySii+dobssii(i,j)
               rmsNii=rmsNii+(dobsnii(i,j)-dmodnii(i,j))**2.
