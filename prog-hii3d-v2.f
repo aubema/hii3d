@@ -135,7 +135,7 @@ c
          read(11,*) ine
          read(11,*) ene
          read(11,*) tpix
-c tpix=taille physique du pixel
+c tpix=taille physique du pixel in cm
       close(unit=11)
 c thetax = inclination angle of the line joining the 2 shells centers 
 c relative to the horizontal right axis counterclock wise

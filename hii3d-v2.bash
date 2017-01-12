@@ -2,25 +2,38 @@
 #This is make-hii3d, for compilate the programs
 # hii3d compiling script
 #
-#cd $HOME/svn/hii3d
+# gfortran -mcmodel=large prog-hii3d-v2.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
+# =====================================================================
+# Set below the various parameters of the model
+#
+# set hii3d path
+hipath=/mnt/parallel_scratch_mp2_wipe_on_august_2017/aube/aube_group/hii3d
+# set execution path on mammouth. You will put the Transfer_to_mp2 there.
+mopath=/mnt/parallel_scratch_mp2_wipe_on_august_2017/aube/aube_group
+let xe=154         # commenter pour retourner au mode interactif
+let ye=161         # commenter pour retourner au mode interactif - coordonnees ny-position sur l'image
+tpix=6.E16         # size of a pixel in cm
+# cases to model
+angx="110."
+angz="1 10 20 30 40 50 60 70"
+distet="1 10 20 30 40 50 60"
+rcirc="30 40 50 60 70 80 90"
+thickstep="10"
+ine="0."
+ene="0."
+#
+# End of set parameters section
+# =====================================================================
+#
 gfortran -mcmodel=medium -Wall -fcheck=all -g -fbacktrace -ffpe-trap=zero,overflow,underflow prog-hii3d-v2.f prog-CleanSIINII.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
 gfortran prog-simul-ratio.f prog-extrant2d.f -o prog-simul-ratio
 gfortran prog-rms.f prog-intrants2d.f -o prog-rms
 gfortran prog-solution.f -o prog-solution
 gfortran prog-SIINIIratio.f prog-extrant2d.f -o prog-SIINIIratio
-
-# gfortran -mcmodel=large prog-hii3d-v2.f prog-SIINIIratio.f prog-extrant2d.f  prog-interSII.f prog-temperatureNII.f prog-dblshell.f prog-en-sigma.f prog-squaredata.f prog-moysigma.f prog-gaussienne.f prog-writeIFrIT.f -o prog-hii3d
-#Compiling done
-# set execution path on mammouth. You will put the Transfer_to_mp2 there.
-mopath=/mnt/parallel_scratch_mp2_wipe_on_august_2017/aube/aube_group
-echo $mopath
 rm -f Transfer_to_mp2/leastSquare.bash
 rm -f Transfer_to_mp2/mocassin.bash
 rm -f Transfer_to_mp2/mocassinPlot.bash
 rm -f Transfer_to_mp2/cases-comparizon.txt
-#
-#
-#
 rm -f Ne3D*.txt
 rm -fr Transfer_to_mp2
 mkdir Transfer_to_mp2
@@ -39,19 +52,6 @@ echo $n >> geometry.tmp
 for i in $list
 do echo $i.txt >> geometry.tmp #add image name.txt in geometry.
 done
-let xe=154         # commenter pour retourner au mode interactif
-let ye=161         # commenter pour retourner au mode interactif - coordonnees ny-position sur l'image
-ni=0
-# ===============
-# definition des cas a modeliser
-angx="110."
-angz="1 10 20 30 40 50 60 70"
-distet="1 10 20 30 40 50 60"
-rcirc="30 40 50 60 70 80 90"
-thickstep="10"
-ine="0."
-ene="0."
-tpix=6.E16   # taille d'un pixel en UNITES?
 #
 #
 angx=`echo $angx`
@@ -138,13 +138,13 @@ do
 #
 # creation of the execute script
 # file mocassin.bash
-                        cat $HOME/hg/hii3d/sub.pbs | sed 's/toto/mocassin/g' > submit.pbs
+                        cat $hipath/sub.pbs | sed 's/toto/mocassin/g' > submit.pbs
                         mv -f submit.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/mocassin.bash
                         echo "qsub ./submit.pbs" >>  Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
-                        cat $HOME/hg/hii3d/sub.pbs | sed 's/toto/mocassinPlot/g' > submitPlot.pbs
+                        cat $hipath/sub.pbs | sed 's/toto/mocassinPlot/g' > submitPlot.pbs
                         mv -f submitPlot.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
                         echo "qsub ./submitPlot.pbs" >> Transfer_to_mp2/mocassinPlot.bash
@@ -152,8 +152,8 @@ do
 # file leastSquare.bash
                         echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/leastSquare.bash
                         echo "rm -f cases-comparizon.tmp" >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s \$HOME/hg/hii3d/bin/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s \$HOME/hg/hii3d/bin/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s \$hipath/bin/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s \$hipath/bin/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
                         echo "cp -f output/plot.out ." >> Transfer_to_mp2/leastSquare.bash
                         echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
                         echo "echo \""$path" \"> rms.tmp" >> Transfer_to_mp2/leastSquare.bash
