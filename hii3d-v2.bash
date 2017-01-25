@@ -6,8 +6,8 @@
 # =====================================================================
 # Set below the various parameters of the model
 #
-# set hii3d path
-hipath=/mnt/parallel_scratch_mp2_wipe_on_august_2017/aube/aube_group/hii3d
+# set hii3d path on mammouth parallel 2 (should be in /home/YOURUSERNAME/hg/hii3d)
+hipath=/home/julienfl/hg/hii3d
 # set execution path on mammouth. You will put the Transfer_to_mp2 there.
 mopath=/mnt/parallel_scratch_mp2_wipe_on_august_2017/aube/aube_group
 let xe=154         # commenter pour retourner au mode interactif
@@ -15,9 +15,9 @@ let ye=161         # commenter pour retourner au mode interactif - coordonnees n
 tpix=6.E16         # size of a pixel in cm
 # cases to model
 angx="110."
-angz="1 10 20 30 40 50 60 70"
-distet="1 10 20 30 40 50 60"
-rcirc="30 40 50 60 70 80 90"
+angz="1"
+distet="1"
+rcirc="30"
 thickstep="10"
 ine="0."
 ene="0."
@@ -138,13 +138,13 @@ do
 #
 # creation of the execute script
 # file mocassin.bash
-                        cat $hipath/sub.pbs | sed 's/toto/mocassin/g' > submit.pbs
+                        cat ./sub.pbs | sed 's/toto/mocassin/g' > submit.pbs
                         mv -f submit.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/mocassin.bash
                         echo "qsub ./submit.pbs" >>  Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
-                        cat $hipath/sub.pbs | sed 's/toto/mocassinPlot/g' > submitPlot.pbs
+                        cat ./sub.pbs | sed 's/toto/mocassinPlot/g' > submitPlot.pbs
                         mv -f submitPlot.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
                         echo "qsub ./submitPlot.pbs" >> Transfer_to_mp2/mocassinPlot.bash
@@ -152,8 +152,8 @@ do
 # file leastSquare.bash
                         echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/leastSquare.bash
                         echo "rm -f cases-comparizon.tmp" >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s \$hipath/bin/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s \$hipath/bin/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s $hipath/bin/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
+                        echo "ln -s $hipath/bin/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
                         echo "cp -f output/plot.out ." >> Transfer_to_mp2/leastSquare.bash
                         echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
                         echo "echo \""$path" \"> rms.tmp" >> Transfer_to_mp2/leastSquare.bash
