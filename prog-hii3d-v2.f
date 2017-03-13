@@ -89,6 +89,7 @@ c  Declaration des variables
       integer imin,imax,jmin,jmax,kmin,kmax
       integer inirand,fill(401,401,401)
       integer ip,jp,kp,xep,yep,zep,soonze
+      real rmin,dmin,rayon                                               ! distance pour definir le rayon de la limite spherique de la zone externe avec densite=ene
       character*40 outfil,tdname,tdfile
       character*20 nom
       pi=3.14159265359
@@ -139,16 +140,11 @@ c tpix=taille physique du pixel in cm
       close(unit=11)
 c thetax = inclination angle of the line joining the 2 shells centers 
 c relative to the horizontal right axis counterclock wise
-c      thetax=20.
 c thetaz = inclination angle of the line joining the 2 shells centers 
 c relative to the line of sight
-c      thetaz=50.
 c distet = physical distance between the center of each shell
-c      distet=30.    
 c rcirc = shells radius (the 2 shells are identical in size and shape)                                      
-c      rcirc=80.
 c thickc = thickness of the shells
-c      thickc=20.
 c minimal signal to noise ratio for the spectral lines images (sig2no)
       sig2no=3.
 c converting to radian
@@ -161,9 +157,7 @@ c La variable box a une valeur maximale de 15.
       box=5
       tpix=tpix*real(box)
 c ine est la densite electronique a l'interieur de la cavite
-c      ine=30.
 c ene est la densite electronique a l'exterieur de la nebuleuse (r>rcirc)
-c      ene=20.
 c
 c fabrication d'un matrice de flag pour identifier ou est le gaz en 3D
 c 0=outside, 1=inside, 2=gaz
@@ -381,6 +375,23 @@ c rechercher des bornes superieures et inferieures pour l histogramme +/- 3 sigm
 
         enddo
       enddo
+c
+c  trouver la face la plus proche de l'etoile centrale
+c
+      rmin=401.
+      dmin=real(abs(int(xe)-imax))
+      if (dmin.lt.rmin) rmin=dmin
+      dmin=real(abs(int(xe)-imin))
+      if (dmin.lt.rmin) rmin=dmin
+      dmin=real(abs(int(ye)-jmax))
+      if (dmin.lt.rmin) rmin=dmin
+      dmin=real(abs(int(ye)-jmin))
+      if (dmin.lt.rmin) rmin=dmin
+      dmin=real(abs(int(ze)-kmax))
+      if (dmin.lt.rmin) rmin=dmin
+      dmin=real(abs(int(ze)-kmin))
+      if (dmin.lt.rmin) rmin=dmin
+
 
 c
 c On tire aleatoirement sur les distributions.
@@ -509,7 +520,11 @@ c Si le ratio est nul, les temperature et la densite ne sont pas consideres.
             endif
 c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree au debut du programme.
             if (fill(i,j,k).eq.0) then
-              Ne(ii,jj,kk)=ene
+               rayon=sqrt((real(i)-xe)**2.+(real(j)-ye)**2.+
+     +         (real(k)-ze)**2.)
+               if (rayon.le.rmin) then
+                  Ne(ii,jj,kk)=ene
+               endif
             endif
             if (fill(i,j,k).eq.1) then
               Ne(ii,jj,kk)=ine

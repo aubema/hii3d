@@ -15,12 +15,14 @@ let ye=161         # commenter pour retourner au mode interactif - coordonnees n
 tpix=6.E16         # size of a pixel in cm
 # cases to model
 angx="110."
-angz="1"
-distet="1"
-rcirc="30"
-thickstep="10"
-ine="0."
-ene="0."
+angz="1 30 60 90"
+distet="1 20 40"
+rcirc="60 75 90"
+thickstep="15"
+ine="0 10 50"
+ene="80 150 300"
+walltime_mocassin="30"
+walltime_mocassinPlot="30"
 #
 # End of set parameters section
 # =====================================================================
@@ -130,21 +132,23 @@ do
                         cp -f input.in Transfer_to_mp2/mocassin_cases/$path"/input"
                         cp -f abun.in Transfer_to_mp2/mocassin_cases/$path"/input"
 # create the plot.in containing the spectral lines to simulate
-                        echo "mono" > Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-                        echo "line 1         6583.   6583."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-                        echo "line 2         5755.   5755."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-                        echo "line 3         6716.   6716."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
-                        echo "line 4         6731.   6731."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in"
+                        echo "mono" > Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" 
+                        echo "line 1         6584.   6584."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #nii      
+                        echo "line 2         5755.   5755."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #nii 
+                        echo "line 3         6716.   6716."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #sii
+                        echo "line 4         6731.   6731."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #sii
 #
 # creation of the execute script
 # file mocassin.bash
-                        cat ./sub.pbs | sed 's/toto/mocassin/g' > submit.pbs
+                        cat ./sub.pbs | sed 's/tototime/'$walltime_mocassin'/g' > submit.tmp
+                        cat ./submit.tmp | sed 's/toto/mocassin/g' > submit.pbs    
                         mv -f submit.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/mocassin.bash
                         echo "qsub ./submit.pbs" >>  Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
-                        cat ./sub.pbs | sed 's/toto/mocassinPlot/g' > submitPlot.pbs
+                        cat ./sub.pbs | sed 's/tototime/'$walltime_mocassinPlot'/g' > submitPlot.tmp
+                        cat ./submitPlot.tmp | sed 's/toto/mocassinPlot/g' > submitPlot.pbs  
                         mv -f submitPlot.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
                         echo "qsub ./submitPlot.pbs" >> Transfer_to_mp2/mocassinPlot.bash
