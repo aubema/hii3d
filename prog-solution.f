@@ -19,7 +19,7 @@ c
                  solution=name
               endif
            enddo
-           print*,'The best 3D model is:',solution 
+           print*,'The best 3D model is:',solution,'RMS= ',old
          close(unit=2)
          stop
          end
