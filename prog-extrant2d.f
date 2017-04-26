@@ -19,7 +19,7 @@ c
 c    Contact: martin.aube@cegepsherbrooke.qc.ca
 c
 c    Ce programme est une routine servant a l'ecriture des extrants 2D.
-c    Il transcipt l'image dans un fichier.
+c    Il transcrit l'image dans un fichier.
 c
 c    Copyright (C) 2014  Alexandre Carbonneau, Catherine Masson, Maude Roy-Labbe, Martin Aubé, 
 c    Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy

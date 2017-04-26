@@ -4,7 +4,7 @@ c
          character*12 nom
          integer i,j,nbx,nby
          real toto
-         real rms,rmsNii,rmsSii,dobsnii(401,401),dobssii(401,401)
+         real rms,rmsNii,rmsSii,dobsnii(401,401),dobssii(401,401)        ! dobs est le ratio observe et dmod est le ratio de mocassin
          real dmodnii(401,401),dmodsii(401,401)
          real moyNii,moySii,nNii,nSii
          nom='bidon'
@@ -46,7 +46,7 @@ c
 
          open(unit=1,file='cases-comparizon.tmp',status='unknown',
      +   position="append")
-             write(1,*) name, rms, rmsNii, rmsSii
+             write(1,*) name, rmsSii, nSii
          close(unit=1)
          stop
          end

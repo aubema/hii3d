@@ -15,14 +15,14 @@ let ye=161         # commenter pour retourner au mode interactif - coordonnees n
 tpix=6.E16         # size of a pixel in cm
 # cases to model
 angx="110."
-angz="1 30 60 90"
+angz="1. 30. 60. 90."
 distet="1 20 40"
-rcirc="60 90"
-thickstep="30"
-ine="0 40"
-ene="80 150 300"
+rcirc="60 90" #pixel donc entier obligatoirement
+thickstep="30" #pixel donc entier obligatoirement
+ine="0. 1."
+ene="0. 0.1"
 walltime_mocassin="30"
-walltime_mocassinPlot="30"
+walltime_mocassinPlot="10"
 #
 # End of set parameters section
 # =====================================================================
