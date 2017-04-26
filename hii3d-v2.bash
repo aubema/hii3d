@@ -18,6 +18,7 @@ angx="110."
 angz="1. 30. 60. 90."
 distet="1 20 40"
 rcirc="60 90" #pixel donc entier obligatoirement
+minthick="40"
 thickstep="30" #pixel donc entier obligatoirement
 ine="0. 1."
 ene="0. 0.1"
@@ -85,7 +86,7 @@ do
          for l in $rcirc
 # m stands for thickness index
 
-         do m=0
+         do let m=minthick
             while [ $m -lt $l ]               # on s'assure que l'epaisseur de la coquille ne depasse pas son rayon
             do let m=m+thickstep
                if [ $m -gt $l ]               # si le thickstep est superieur au rayon de la coquille on ne modelise qu'une sphere pleine
