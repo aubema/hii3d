@@ -1,0 +1,52 @@
+#!/bin/bash
+# This program will prepare the plot.in file for mocassin flux extraction
+# in the framework of the hii3d package
+# must be run in the mocassin_cases directory
+#
+# making list of cases
+pwd
+echo "Are you sure you are in the mocassin_cases directory? (y/n)"
+read answer1
+echo "Are you sure that mocassin calculations are all completed? (y/n)"
+if [ "$answer1" != "y" ] &&  [ "$answer2" != "y" ]
+then exit 0
+else
+   rm -f ../mocassinPlot.bash
+   rm -f ../leastSquare.bash
+   mopath=`pwd`
+   list=`ls -1`
+   for i in $list
+   do echo "Case "$i
+      # finding index of the SII 6716 line
+      grep -1 "6718\.30" $i/output/lineFlux.out | tail -1 > toto.tmp
+      read bidon I6716 bidon < toto.tmp
+      # finding index of the SII 6731 line
+      grep -1 "6732\.69" $i/output/lineFlux.out | tail -1 > toto.tmp
+      read bidon I6731 bidon < toto.tmp
+      # finding index of the NII 5755 line
+      grep -1 "5756\.19" $i/output/lineFlux.out | tail -1 > toto.tmp
+      read bidon I5755 bidon < toto.tmp
+      # finding index of the NII 6584 line
+      grep -1 "6585\.27" $i/output/lineFlux.out | tail -1 > toto.tmp
+      read bidon I6584 bidon < toto.tmp
+      echo "mono" > $i/input/plot.in
+      echo "line "$I6584 " 6584. 6584."  >> $i/input/plot.in
+      echo "line "$I5755 " 5755. 5755."  >> $i/input/plot.in
+      echo "line "$I6716 " 6716. 6716."  >> $i/input/plot.in
+      echo "line "$I6731 " 6731. 6731."  >> $i/input/plot.in
+
+      echo "cd " $mopath"/"$i >>  ../mocassinPlot.bash
+      echo "qsub ./submitPlot.pbs" >> ../mocassinPlot.bash
+      echo "sleep 0.05"  >> ../mocassinPlot.bash
+      # file leastSquare.bash
+      echo "cd " $mopath"/"$i  >> ../leastSquare.bash
+      echo "rm -f cases-comparizon.tmp" >> ../leastSquare.bash
+      echo "ln -s "$HOME"/hg/bin/prog-simul-ratio ." >> ../leastSquare.bash
+      echo "ln -s "$HOME"/hg/bin/prog-rms ." >> ../leastSquare.bash
+      echo "cp -f output/plot.out ." >> ../leastSquare.bash
+      echo "./prog-simul-ratio" >> ../leastSquare.bash
+      echo "echo \""$i" \"> rms.tmp" >> ../leastSquare.bash
+      echo "./prog-rms < rms.tmp" >> ../leastSquare.bash
+      echo "cat cases-comparizon.tmp >> ../../cases-comparizon.txt" >> ../leastSquare.bash
+
+fi
