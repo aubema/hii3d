@@ -48,5 +48,4 @@ else
       echo "echo \""$i" \"> rms.tmp" >> ../leastSquare.bash
       echo "./prog-rms < rms.tmp" >> ../leastSquare.bash
       echo "cat cases-comparizon.tmp >> ../../cases-comparizon.txt" >> ../leastSquare.bash
-
 fi

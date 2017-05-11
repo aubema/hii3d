@@ -132,48 +132,19 @@ do
                         cp -f NIIratio3D.txt Transfer_to_mp2/mocassin_cases/$path
                         cp -f input.in Transfer_to_mp2/mocassin_cases/$path"/input"
                         cp -f abun.in Transfer_to_mp2/mocassin_cases/$path"/input"
-# create the plot.in containing the spectral lines to simulate
-                        echo "mono" > Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" 
-                        echo "line 1         6584.   6584."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #nii      
-                        echo "line 2         5755.   5755."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #nii 
-                        echo "line 3         6716.   6716."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #sii
-                        echo "line 4         6731.   6731."  >> Transfer_to_mp2/mocassin_cases/$path"/input/plot.in" #sii
 #
 # creation of the execute script
 # file mocassin.bash
-                        cat ./sub.pbs | sed 's/tototime/'$walltime_mocassin'/g' > submit.tmp
+                        cat $hipath/sub.pbs | sed 's/tototime/'$walltime_mocassin'/g' > submit.tmp
                         cat ./submit.tmp | sed 's/toto/mocassin/g' > submit.pbs    
                         mv -f submit.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/mocassin.bash
                         echo "qsub ./submit.pbs" >>  Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
-                        cat ./sub.pbs | sed 's/tototime/'$walltime_mocassinPlot'/g' > submitPlot.tmp
+                        cat $hipath/sub.pbs | sed 's/tototime/'$walltime_mocassinPlot'/g' > submitPlot.tmp
                         cat ./submitPlot.tmp | sed 's/toto/mocassinPlot/g' > submitPlot.pbs  
                         mv -f submitPlot.pbs Transfer_to_mp2/mocassin_cases/$path
-                        echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >>  Transfer_to_mp2/mocassinPlot.bash
-                        echo "qsub ./submitPlot.pbs" >> Transfer_to_mp2/mocassinPlot.bash
-                        echo "sleep 0.05"  >> Transfer_to_mp2/mocassinPlot.bash
-# file leastSquare.bash
-                        echo "cd "$mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/leastSquare.bash
-                        echo "rm -f cases-comparizon.tmp" >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s $hipath/bin/prog-simul-ratio ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "ln -s $hipath/bin/prog-rms ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "cp -f output/plot.out ." >> Transfer_to_mp2/leastSquare.bash
-                        echo "./prog-simul-ratio" >> Transfer_to_mp2/leastSquare.bash
-                        echo "echo \""$path" \"> rms.tmp" >> Transfer_to_mp2/leastSquare.bash
-                        echo "./prog-rms < rms.tmp" >> Transfer_to_mp2/leastSquare.bash
-                        echo "cat cases-comparizon.tmp >> "$mopath"/Transfer_to_mp2/cases-comparizon.txt" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*.mod" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -fr "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/input" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -fr "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/output" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*.gz" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/makefile*" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*.dat" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/accessories" >> Transfer_to_mp2/leastSquare.bash 
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/benchmarks" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/examples" >> Transfer_to_mp2/leastSquare.bash
-#                        echo "rm -f "$mopath"/Transfer_to_mp2/mocassin_cases/"$path"/*ata" >> Transfer_to_mp2/leastSquare.bash
                    done
                   done
                else
