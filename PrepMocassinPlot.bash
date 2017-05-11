@@ -8,8 +8,10 @@ pwd
 echo "Are you sure you are in the mocassin_cases directory? (y/n)"
 read answer1
 echo "Are you sure that mocassin calculations are all completed? (y/n)"
+read answer2
 if [ "$answer1" != "y" ] &&  [ "$answer2" != "y" ]
-then exit 0
+then echo "go the the mocassin_cases directory and/or wait for mocassin calculations to be completed"
+     exit 0
 else
    rm -f ../mocassinPlot.bash
    rm -f ../leastSquare.bash
