@@ -22,15 +22,32 @@ else
       # finding index of the SII 6716 line
       grep -1 "6718\.30" $i/output/lineFlux.out | tail -1 > toto.tmp
       read bidon I6716 bidon < toto.tmp
+      if [ "$I6716" != "$I6716_old" ]
+      then echo "I6716="$$I6716
+      fi
+      I6716_old=$I6716
       # finding index of the SII 6731 line
       grep -1 "6732\.69" $i/output/lineFlux.out | tail -1 > toto.tmp
       read bidon I6731 bidon < toto.tmp
+      if [ "$I6731" != "$I6731_old" ]
+      then echo "I6731="$$I6731
+      fi
+      I6731_old=$I6731
+
       # finding index of the NII 5755 line
       grep -1 "5756\.19" $i/output/lineFlux.out | tail -1 > toto.tmp
       read bidon I5755 bidon < toto.tmp
+      if [ "$I5755" != "$I5755_old" ]
+      then echo "I5755="$$I5755
+      fi
+      I5755_old=$I5755
       # finding index of the NII 6584 line
       grep -1 "6585\.27" $i/output/lineFlux.out | tail -1 > toto.tmp
       read bidon I6584 bidon < toto.tmp
+      if [ "$I6584" != "$I6584_old" ]
+      then echo "I6584="$$I6584
+      fi
+      I6584_old=$I6584
       echo "mono" > $i/input/plot.in
       echo "line "$I6584 " 6584. 6584."  >> $i/input/plot.in
       echo "line "$I5755 " 5755. 5755."  >> $i/input/plot.in
