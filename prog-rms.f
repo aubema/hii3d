@@ -6,7 +6,7 @@ c
          real toto
          real rms,rmsNii,rmsSii,dobsnii(401,401),dobssii(401,401)        ! dobs est le ratio observe et dmod est le ratio de mocassin
          real dmodnii(401,401),dmodsii(401,401)
-         real moyNii,moySii,nNii,nSii
+         real moyNii,moySii,nNii,nSii,avgSii,avgNii
          nom='bidon'
          print*,'Name of the case'
          read*,name
@@ -37,7 +37,9 @@ c
          moyNii=moyNii/nNii
          moySii=moySii/nSii
          rmsNii=rmsNii/nNii
+         avgNii=rmsNii
          rmsSii=rmsSii/nSii
+         avgSii=rmsSii
          rmsNii=sqrt(rmsNii)
          rmsSii=sqrt(rmsSii)
          rmsNii=rmsNii/moyNii
@@ -46,7 +48,7 @@ c
 
          open(unit=1,file='cases-comparizon.tmp',status='unknown',
      +   position="append")
-             write(1,*) name, rmsSii, nSii
+             write(1,*) name, avgSii, nSii
          close(unit=1)
          stop
          end
