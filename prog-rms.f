@@ -48,7 +48,8 @@ c
 
          open(unit=1,file='cases-comparizon.tmp',status='unknown',
      +   position="append")
-             write(1,*) name, avgSii, nSii
+c printing the name_of_case average_of_squared_residuals mean_ratio_SII number_averaged_pixels
+             write(1,*) name, avgSii, moySii, nSii
          close(unit=1)
          stop
          end
