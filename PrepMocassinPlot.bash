@@ -60,9 +60,9 @@ else
       echo "sleep 0.05"  >> ../mocassinPlot.bash
       # file leastSquare.bash
       echo "cd " $mopath"/"$i  >> ../leastSquare.bash
-      echo "rm -f cases-comparizon.tmp" >> ../leastSquare.bash
-      echo "ln -s "$HOME"/hg/bin/prog-simul-ratio ." >> ../leastSquare.bash
-      echo "ln -s "$HOME"/hg/bin/prog-rms ." >> ../leastSquare.bash
+      echo "rm -f cases-comparizon.tmp prog-simul-ratio prog-rms" >> ../leastSquare.bash
+      echo "ln -s "$HOME"/hg/hii3d/bin/prog-simul-ratio ." >> ../leastSquare.bash
+      echo "ln -s "$HOME"/hg/hii3d/bin/prog-rms ." >> ../leastSquare.bash
       echo "cp -f output/plot.out ." >> ../leastSquare.bash
       echo "./prog-simul-ratio" >> ../leastSquare.bash
       echo "echo \""$i" \"> rms.tmp" >> ../leastSquare.bash
