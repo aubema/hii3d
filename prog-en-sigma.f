@@ -19,14 +19,16 @@ c
 c    Contact: martin.aube@cegepsherbrooke.qc.ca
 c
 c    Ce programme elargit la distribution des donnees pour en fonction du nombre de cellules
-c    montant un flag = 2 dans la matrice fill(i,j,k)
+c    montrant un flag = 2 dans la matrice fill(i,j,k)
+c    on tient compte de la resolution finale de la matrice qui est degradee donc
+c    l'elargissement de sigma doit etre moindre
 c
 c    Copyright (C) 2014   Martin Aubé, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
-        subroutine ensigma(sigma,nbx,nby,fill)
+        subroutine ensigma(sigma,nbx,nby,fill,box)
         real sigma(401,401),nvoxel
         integer fill(401,401,401)
-        integer nbx,nby
+        integer nbx,nby,box
         open(unit=1,file='rond.in',status='old')
         read(1,*) xc,yc
         close(unit=1)
@@ -40,7 +42,7 @@ c La boucle fait en sorte de modifier tous les sigmas existants.
                    endif
                 enddo
                 if (nvoxel.gt.0) then
-                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel)/nvoxel
+                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel/int(box)
                 else
                   sigma(i,j)=0.
                 endif
