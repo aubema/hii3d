@@ -42,7 +42,7 @@ c La boucle fait en sorte de modifier tous les sigmas existants.
                    endif
                 enddo
                 if (nvoxel.gt.0) then
-                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel/int(box)
+                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel/int(box))
                 else
                   sigma(i,j)=0.
                 endif
