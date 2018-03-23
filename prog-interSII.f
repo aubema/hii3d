@@ -26,7 +26,7 @@ c
 c    Copyright (C) 2014  Alexandre Carbonneau, Catherine Masson, Maude Roy-Labbe, Martin Aubé, 
 c    Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
-       subroutine interSII (dens, rapp, aptmp)
+       subroutine interSII(dens,rapp,aptmp)
        dimension ratio(19,2)
        integer n
        real dens, rapp, aptmp, ratio,m,b     
@@ -71,12 +71,19 @@ c
        do i=1,19
          ratio(i,2)=ratio(i,2)*sqrt(10000./aptmp)                                    ! correction de l'echelle horizontale pour la temparature du grap. 5.3 de Osterbrock
        enddo
-       n=1
-       do while (rapp.lt.ratio(n,1))
-           n=n+1
-           m=(ratio(n-1,1)-ratio(n,1))/(ratio(n-1,2)-ratio(n,2))
-           b=ratio(n-1,1)-m*ratio(n-1,2)
-           dens=(rapp-b)/m
+       do n=1,18
+          if (rapp.eq.ratio(n,1)) then
+             dens=ratio(n,2)
+          elseif ((rapp.lt.ratio(n,1)).and.(rapp.ge.ratio(n+1,1))) then
+                m=(ratio(n+1,2)-ratio(n,2))/(ratio(n+1,1)-ratio(n,1))
+                b=ratio(n,2)-ratio(n,1)*m
+                dens=m*rapp+b
+          endif
+c       print*,dens,ratio(n,2),ratio(n+1,2),rapp,ratio(n,1),ratio(n+1,1)
+
+
        enddo
+c       print*,dens,ratio(n,2),ratio(n+1,2),rapp,ratio(n,1),ratio(n+1,1)
+c       stop
        return
        end      

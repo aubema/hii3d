@@ -27,12 +27,18 @@ c
         subroutine gaussienne(moyl,sigmal,R3D,xmin,xmax)
         real moyl,sigmal,alea(2000000)
         real e,pi,Fmax,xmin,xmax,Inte,y,R3D,F
-        real random
+        real random,toto
         integer n,m
         e=2.71828182846
         pi=3.14159265359
         n=0
-        Fmax=1./(sigmal*sqrt(2.*pi))/100.
+
+
+        toto=0.
+c        do i=1,2000000
+c          alea(i)=0.
+c        enddo
+        Fmax=1./(sigmal*sqrt(2.*pi))/200.
         Inte=(xmax-xmin)/100.
         y=xmin+Inte/2.
         do while (y.le.xmax)
@@ -48,5 +54,13 @@ c On tire aleatoirement dans la gaussienne, et la valeur R3D sera ensuite
 c ajoutee a la matrice 3D dans hii3d.
         random=rand()
         R3D=alea(nint(random*real(n))+1)
+
+
+c test si la distribution a la moyenne correcte
+c        do i=1,n
+c         toto=toto+alea(i)
+c        enddo
+c        toto=toto/(real(n))
+c        print*,'testmoy',toto,moyl,n,R3D
         return
         end

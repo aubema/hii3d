@@ -34,7 +34,7 @@ c    Copyright (C) 2015  Martin Aubé, Alexandre Carbonneau, Catherine Masson,
 c    Maude Roy-Labbe, Thierry Daviault, Philippe Karan, Alice Roy-Labbe, Sunny Roy
 c
 c  Declaration des variables           
-      real Nemoy
+      real Nemoy,Temoy
       real sqrS6716(401,401,225),sqrS6731(401,401,225)
       real sqrN6584(401,401,225),sqrN5755(401,401,225)
 
@@ -94,6 +94,7 @@ c  Declaration des variables
       character*20 nom
       pi=3.14159265359
       Nemoy=0.
+      Temoy=0.
       NNe=0
       soonze=71
       zero=0.
@@ -101,6 +102,7 @@ c  Declaration des variables
       Tmin=6900.                                                          ! Valeurs min et max selon table 3 Philips 1998 Astron. Astrophys 340, 527-542
       Tmax=21500.
       Nmin=5.                                                            ! 20 remplace la valeur de 44.66 de Philips 1998 pour coincider avec Lagrois et al 2015
+      toto=0.
 c selon Lagrois Ne varie de 20 a 230 cm-1 dans M27 et Te varie de 8400 a 13000K
 c nous repoussé cette limite a 5 sans solide justification pour eviter une boucle infinie.
 c c'est raisonnable puisque les valeurs observees sont des moyennes sur la ligne de visee
@@ -289,87 +291,50 @@ c rechercher des bornes superieures et inferieures pour l histogramme +/- 3 sigm
       print*,'Calculation of the 3D NII and SII ratios...'
       do i=imin,imax,box
         do j=jmin,jmax,box
-
-          intmxS6716(i,j)=-10000.
-          intmnS6716(i,j)=10000.
-          intmxS6731(i,j)=-10000.
-          intmnS6731(i,j)=10000.
-
-          intmxN6584(i,j)=-10000.
-          intmnN6584(i,j)=10000.
-          intmxN5755(i,j)=-10000.
-          intmnN5755(i,j)=10000.
-
-        enddo
-      enddo
-      do i=imin,imax,box
-        do j=jmin,jmax,box
-          if (moyS6716(i,j)-3.*sigmS6716(i,j).lt.intmnS6716(i,j)) then
-            intmnS6716(i,j)=moyS6716(i,j)-3.*sigmS6716(i,j)
+          intmxS6716(i,j)=moyS6716(i,j)+3.*sigmS6716(i,j)
+          intmnS6716(i,j)=moyS6716(i,j)-3.*sigmS6716(i,j)
+          if (intmnS6716(i,j).lt.0.) then
+             intmnS6716(i,j)=0.
+             intmxS6716(i,j)=2.*moyS6716(i,j)
           endif
-          if (moyS6716(i,j)+3.*sigmS6716(i,j).gt.intmxS6716(i,j)) then
-            intmxS6716(i,j)=moyS6716(i,j)+3.*sigmS6716(i,j)
-          endif
-
-
-
           if (sigmS6716(i,j).le.0.) then
              intmnS6716(i,j)=0.
              intmxS6716(i,j)=0.
              moyS6716(i,j)=0.
           endif
-          if (intmnS6716(i,j).lt.0.) intmnS6716(i,j)=0.
-
-
-
-
-          if (moyS6731(i,j)-3.*sigmS6731(i,j).lt.intmnS6731(i,j)) then
-            intmnS6731(i,j)=moyS6731(i,j)-3.*sigmS6731(i,j)
+          intmxS6731(i,j)=moyS6731(i,j)+3.*sigmS6731(i,j)
+          intmnS6731(i,j)=moyS6731(i,j)-3.*sigmS6731(i,j)
+          if (intmnS6731(i,j).lt.0.) then
+             intmnS6731(i,j)=0.
+             intmxS6731(i,j)=2.*moyS6731(i,j)
           endif
-          if (moyS6731(i,j)+3.*sigmS6731(i,j).gt.intmxS6731(i,j)) then
-            intmxS6731(i,j)=moyS6731(i,j)+3.*sigmS6731(i,j)
-          endif
-
-
           if (sigmS6731(i,j).le.0.) then
              intmnS6731(i,j)=0.
              intmxS6731(i,j)=0.
              moyS6731(i,j)=0.
           endif
-          if (intmnS6731(i,j).lt.0.) intmnS6731(i,j)=0.
-
-
-          if (moyN6584(i,j)-3.*sigmN6584(i,j).lt.intmnN6584(i,j)) then
-            intmnN6584(i,j)=moyN6584(i,j)-3.*sigmN6584(i,j)
+          intmxN6584(i,j)=moyN6584(i,j)+3.*sigmN6584(i,j)
+          intmnN6584(i,j)=moyN6584(i,j)-3.*sigmN6584(i,j)
+          if (intmnN6584(i,j).lt.0.) then
+             intmnN6584(i,j)=0.
+             intmxN6584(i,j)=2.*moyN6584(i,j)
           endif
-          if (moyN6584(i,j)+3.*sigmN6584(i,j).gt.intmxN6584(i,j)) then
-            intmxN6584(i,j)=moyN6584(i,j)+3.*sigmN6584(i,j)
-          endif
-
-
           if (sigmN6584(i,j).le.0.) then
              intmnN6584(i,j)=0.
              intmxN6584(i,j)=0.
              moyN6584(i,j)=0.
           endif
-          if (intmnN6584(i,j).lt.0.) intmnN6584(i,j)=0.
-
-
-          if (moyN5755(i,j)-3.*sigmN5755(i,j).lt.intmnN5755(i,j)) then
-            intmnN5755(i,j)=moyN5755(i,j)-3.*sigmN5755(i,j)
+          intmxN5755(i,j)=moyN5755(i,j)+3.*sigmN5755(i,j)
+          intmnN5755(i,j)=moyN5755(i,j)-3.*sigmN5755(i,j)
+          if (intmnN5755(i,j).lt.0.) then
+             intmnN5755(i,j)=0.
+             intmxN5755(i,j)=2.*moyN5755(i,j)
           endif
-          if (moyN5755(i,j)+3.*sigmN5755(i,j).gt.intmxN5755(i,j)) then
-            intmxN5755(i,j)=moyN5755(i,j)+3.*sigmN5755(i,j)
-          endif
-
           if (sigmN5755(i,j).le.0.) then
              intmnN5755(i,j)=0.
              intmxN5755(i,j)=0.
              moyN5755(i,j)=0.
           endif
-          if (intmnN5755(i,j).lt.0.) intmnN5755(i,j)=0.
-
-
         enddo
       enddo
 c
@@ -405,10 +370,15 @@ c
  210        if (fill(i,j,k).eq.2) then
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de flux de raie
 c dans un ensemble de données cree a partir de moy et sigma.   
-              if (sigmS6716(i,j).ne.0.) then    
- 100            call gaussienne(moyS6716(i,j),sigmS6716(i,j),flux1,
+ 100          if (sigmS6716(i,j).ne.0.) then    
+                call gaussienne(moyS6716(i,j),sigmS6716(i,j),flux1,
      +          intmnS6716(i,j),intmxS6716(i,j))
                 S67163d(ii,jj,kk)=flux1
+
+
+c       print*,'SII1',moyS6716(i,j),sigmS6716(i,j),flux1
+
+
                 if (flux1.le.0.) then
                    print*,'flux1=',flux1
                    goto 100
@@ -416,10 +386,15 @@ c dans un ensemble de données cree a partir de moy et sigma.
               else
                 S67163d(ii,jj,kk)=0.
               endif
-              if (sigmS6731(i,j).ne.0.) then        
- 101            call gaussienne(moyS6731(i,j),sigmS6731(i,j),flux2,
+ 101          if (sigmS6731(i,j).ne.0.) then        
+                call gaussienne(moyS6731(i,j),sigmS6731(i,j),flux2,
      +          intmnS6731(i,j),intmxS6731(i,j))
                 S67313d(ii,jj,kk)=flux2
+
+
+c       print*,'SII2',moyS6731(i,j),sigmS6731(i,j),flux2
+
+
                 if (flux2.le.0.) then
                   print*,'flux2=',flux2
                   goto 101
@@ -433,8 +408,10 @@ c
               if ((sigmS6716(i,j).ne.0.).and.(sigmS6731(i,j).ne.0.)) 
      +        then
                  SII3d(ii,jj,kk)=flux1/flux2
-                 if (SII3d(ii,jj,kk).lt.0.45) SII3d(ii,jj,kk)=0.4501
-                 if (SII3d(ii,jj,kk).gt.1.43) SII3d(ii,jj,kk)=1.4299
+                 if (SII3d(ii,jj,kk).lt.0.45) goto 100
+c SII3d(ii,jj,kk)=0.4501
+                 if (SII3d(ii,jj,kk).gt.1.43) goto 100
+c SII3d(ii,jj,kk)=1.4299
 c we assume this case to happen when the S/N is bad
               else
                  SII3d(ii,jj,kk)=0.
@@ -443,10 +420,15 @@ c we assume this case to happen when the S/N is bad
 c
 c On appelle la routine gaussienne qui tire aleatoirement une valeur de flux de raie
 c dans un ensemble de données cree a partir de moy et sigma.
-              if (sigmN6584(i,j).ne.0.) then        
- 200            call gaussienne(moyN6584(i,j),sigmN6584(i,j),flux1,
+ 200          if (sigmN6584(i,j).ne.0.) then        
+                call gaussienne(moyN6584(i,j),sigmN6584(i,j),flux1,
      +          intmnN6584(i,j),intmxN6584(i,j))
                 N65843d(ii,jj,kk)=flux1
+
+
+c       print*,'NII1',moyN6584(i,j),sigmN6584(i,j),flux1
+
+
                 if (flux1.le.0.) then
                    print*,'flux1-6584',flux1
                    goto 200
@@ -458,6 +440,9 @@ c dans un ensemble de données cree a partir de moy et sigma.
  201            call gaussienne(moyN5755(i,j),sigmN5755(i,j),flux2,
      +          intmnN5755(i,j),intmxN5755(i,j))
                 N57553d(ii,jj,kk)=flux2
+
+c       print*,'NII2',moyN5755(i,j),sigmN5755(i,j),flux2
+
                 if (flux2.le.0.) then
                    print*,'flux2-5755',flux2
                    goto 201
@@ -472,46 +457,64 @@ c
               if ((sigmN6584(i,j).ne.0.).and.(sigmN5755(i,j).ne.0.)) 
      +        then
                  NII3d(ii,jj,kk)=4.*flux1/(3.*flux2)
-                 if (NII3d(ii,jj,kk).lt.35.) NII3d(ii,jj,kk)=35.01
-                 if (NII3d(ii,jj,kk).gt.450.) NII3d(ii,jj,kk)=449.99
+                 if (NII3d(ii,jj,kk).lt.35.) goto 200
+c NII3d(ii,jj,kk)=35.01
+                 if (NII3d(ii,jj,kk).gt.450.) goto 200
+c  NII3d(ii,jj,kk)=449.99
               else
                  NII3d(ii,jj,kk)=0.
               endif
             else 
               SII3d(ii,jj,kk)=0.
               NII3d(ii,jj,kk)=0.
-
             endif
 
 
 
-c
-c
+           
+
+
+
+
+
+
+
             aptmp=10000.
             dens=0.
 c Si la valeur ne converge pas, on augmente le k.
             if ((NII3d(ii,jj,kk).ne.0.).and.(SII3d(ii,jj,kk).ne.0.)) 
      +      then
               somme=0.
-              do n=1,10
+              do n=1,5
 c On appelle la routine interSII qui retourne la densite si on lui donne la temperature et le ratio SII.
-                call interSII (dens, SII3d(ii,jj,kk),aptmp)                           
+c                call interSII(dens,SII3d(ii,jj,kk),aptmp)      
+             
+                call densiteSII(SII3d(ii,jj,kk),aptmp,dens)
+
+                     
                 Ne(ii,jj,kk)=dens
 c On appelle la routine temperatureNII qui retourne la temperature si on lui donne la densite et le ratio NII.
                 call temperatureNII(NII3d(ii,jj,kk),dens,aptmp)                       
                 Te(ii,jj,kk)=aptmp
+c            print*,ii,jj,n,Te(ii,jj,kk),Ne(ii,jj,kk)
               enddo
          if (((Te(ii,jj,kk).lt.Tmin).or.(Te(ii,jj,kk).gt.Tmax)).or.
      +   ((Ne(ii,jj,kk).lt.Nmin).or.(Ne(ii,jj,kk).gt.Nmax))) then
-            print*,ii,jj,Te(ii,jj,kk),Ne(ii,jj,kk)
+
+
+
             goto 210
+
+
          endif
+            toto=toto+SII3d(ii,jj,kk)
 c Si le ratio est nul, les temperature et la densite ne sont pas consideres.
             else
               Ne(ii,jj,kk)=0.
               Te(ii,jj,kk)=0.
             endif
             if (Ne(ii,jj,kk).gt.0.) then
+              Temoy=Temoy+Te(ii,jj,kk)
               Nemoy=Nemoy+Ne(ii,jj,kk)
               NNe=NNe+1
             endif
@@ -526,11 +529,11 @@ c On remplit l'exterieur et l'interieur de la nebuleuse avec la densite entree a
             if (fill(i,j,k).eq.1) then
               Ne(ii,jj,kk)=ine
             endif       
-            
           enddo
         enddo
       enddo
-      print*,'Averaged electron density=',Nemoy/real(NNe),NNe
+      print*,'Avg dens and temp=',Nemoy/real(NNe),Temoy/real(NNe),NNe
+     +,toto/real(NNe)
       print*,'Printing out the 2D images and 3D files...'
 c Fin de la creation de la matrice 3D.
 c Nous possedons alors des matrice SII3d et NII3d en 3D, remplie de ratios de raies.

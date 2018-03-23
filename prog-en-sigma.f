@@ -29,6 +29,7 @@ c
         real sigma(401,401),nvoxel
         integer fill(401,401,401)
         integer nbx,nby,box
+        box=box
         open(unit=1,file='rond.in',status='old')
         read(1,*) xc,yc
         close(unit=1)
@@ -42,7 +43,8 @@ c La boucle fait en sorte de modifier tous les sigmas existants.
                    endif
                 enddo
                 if (nvoxel.gt.0) then
-                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel/int(box))
+                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel/real(box**3))
+c                  sigma(i,j)=sigma(i,j)*sqrt(nvoxel)/nvoxel
                 else
                   sigma(i,j)=0.
                 endif
