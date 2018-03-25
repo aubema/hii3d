@@ -408,9 +408,9 @@ c
               if ((sigmS6716(i,j).ne.0.).and.(sigmS6731(i,j).ne.0.)) 
      +        then
                  SII3d(ii,jj,kk)=flux1/flux2
-                 if (SII3d(ii,jj,kk).lt.0.45) goto 100
+                 if (SII3d(ii,jj,kk).lt.0.44) goto 100
 c SII3d(ii,jj,kk)=0.4501
-                 if (SII3d(ii,jj,kk).gt.1.43) goto 100
+                 if (SII3d(ii,jj,kk).gt.1.45) goto 100
 c SII3d(ii,jj,kk)=1.4299
 c we assume this case to happen when the S/N is bad
               else
