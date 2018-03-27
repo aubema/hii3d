@@ -6,10 +6,12 @@
 # =====================================================================
 # Set below the various parameters of the model
 #
-# set hii3d path on mammouth parallel 2 (should be in /home/YOURUSERNAME/hg/hii3d)
-hipath=/home/julienfl/hg/hii3d
+# set hii3d path where this code will be executed
+hipath=/home/aubema/hg/hii3d
 # set execution path on mammouth. You will put the Transfer_to_mp2 there.
 mopath=/mnt/parallel_scratch_mp2_wipe_on_august_2017/aube/aube_group
+# set the mocassin code path on mammouth
+mocapath=/mnt/parallel_scratch_mp2_wipe_on_december_2017/aube/aube_group/mocassin.2.02.70
 let xe=154         # commenter pour retourner au mode interactif
 let ye=161         # commenter pour retourner au mode interactif - coordonnees ny-position sur l'image
 tpix=6.E16         # size of a pixel in cm
@@ -135,14 +137,14 @@ do
 #
 # creation of the execute script
 # file mocassin.bash
-                        cat $hipath/sub.pbs | sed 's/tototime/'$walltime_mocassin'/g' > submit.tmp
+                        cat $hipath/sub.pbs | sed 's/tototime/'$walltime_mocassin'/g' | sed 's/mocassinpath/'$mocapath'/g' > submit.tmp
                         cat ./submit.tmp | sed 's/toto/mocassin/g' > submit.pbs    
                         mv -f submit.pbs Transfer_to_mp2/mocassin_cases/$path
                         echo "cd " $mopath"/Transfer_to_mp2/mocassin_cases/"$path >> Transfer_to_mp2/mocassin.bash
                         echo "qsub ./submit.pbs" >>  Transfer_to_mp2/mocassin.bash
                         echo "sleep 0.05"  >>  Transfer_to_mp2/mocassin.bash
 # file mocassinPlot.bash
-                        cat $hipath/sub.pbs | sed 's/tototime/'$walltime_mocassinPlot'/g' > submitPlot.tmp
+                        cat $hipath/sub.pbs | sed 's/tototime/'$walltime_mocassinPlot'/g'| sed 's/mocassinpath/'$mocapath'/g' > submitPlot.tmp
                         cat ./submitPlot.tmp | sed 's/toto/mocassinPlot/g' > submitPlot.pbs  
                         mv -f submitPlot.pbs Transfer_to_mp2/mocassin_cases/$path
                    done
